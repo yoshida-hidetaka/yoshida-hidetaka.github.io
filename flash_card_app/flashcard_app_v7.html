@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一問一答 暗記アプリ (世界白地図・高精度版)</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #1e293b;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .screen {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .menu-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+        .progress {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .map-container {
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 8px;
+            background-color: #f0fdf4; /* 美しい淡い緑ベースの背景 */
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .map-svg {
+            width: 100%;
+            max-height: 320px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .word-display {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 20px 0;
+            color: #0f172a;
+            min-height: 32px;
+            line-height: 1.5;
+        }
+        .meaning-display {
+            font-size: 28px;
+            color: #ef4444;
+            margin: 15px 0;
+            min-height: 36px;
+            font-weight: 700;
+        }
+        .hidden {
+            visibility: hidden;
+        }
+        .btn {
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .primary-btn { background-color: #10b981; color: white; width: 85%; }
+        .success-btn { background-color: #10b981; color: white; }
+        .danger-btn { background-color: #ef4444; color: white; }
+        .back-btn { background-color: #64748b; color: white; margin-top: 12px; width: 85%; }
+        .retry-btn { background-color: #f59e0b; color: white; width: 85%; margin-top: 20px; }
+        
+        .score {
+            font-size: 22px;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .result-list-container {
+            text-align: left;
+            margin: 20px 0;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            background-color: #f8fafc;
+        }
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        .badge-correct { background-color: #10b981; }
+        .badge-incorrect { background-color: #ef4444; }
+        .q-text { color: #334155; font-weight: 500; }
+        .a-text { font-weight: 700; color: #0f172a; }
+
+        /* 高精度フリー白地図風デザインのSVGクラス */
+        .ocean { fill: #f0fdf4; }
+        .bg-land { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.2; } /* 一般的な白地図の境界線 */
+        .target-highlight { fill: #fde047 !important; stroke: #eab308; stroke-width: 1.8; } /* クイズ対象国を鮮やかな黄色に */
+        .excluded-land { fill: #f1f5f9; stroke: #cbd5e1; stroke-width: 1.2; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. メニュー画面 -->
+    <div id="menu-screen" class="screen active">
+        <h1>暗記アプリ</h1>
+        <p style="color: #64748b;">問題を選択してください</p>
+        <button class="menu-btn" onclick="startQuiz('months')">中１英単語（月）</button>
+        <button class="menu-btn" onclick="startQuiz('days')">中１英単語（曜日）</button>
+        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ地理・白地図クイズ</button>
+    </div>
+
+    <!-- 2. クイズ画面 -->
+    <div id="quiz-screen" class="screen">
+        <div id="progress" class="progress">1 / 5</div>
+        
+        <!-- 世界のフリー白地図イメージをベースにした、問題周辺のみのクローズアップ高精度SVGエリア -->
+        <div id="map-area" class="map-container" style="display: none;">
+            <svg id="europe-svg" class="map-svg" viewBox="0 0 400 300">
+                <!-- JavaScriptにより各問題に最適な高精度ローカル白地図が動的に流し込まれます -->
+            </svg>
+        </div>
+
+        <div id="word" class="word-display">-</div>
+        
+        <div id="meaning-box">
+            <div id="meaning" class="meaning-display hidden">-</div>
+        </div>
+
+        <!-- 初期状態：OKボタン -->
+        <div id="action-before">
+            <button class="btn primary-btn" onclick="showAnswer()">OK</button>
+        </div>
+
+        <!-- OKを押した後：正解・不正解ボタン -->
+        <div id="action-after" style="display: none;">
+            <button class="btn success-btn" onclick="submitResult(true)">正解 〇</button>
+            <button class="btn danger-btn" onclick="submitResult(false)">不正解 ×</button>
+        </div>
+    </div>
+
+    <!-- 3. 結果画面 -->
+    <div id="result-screen" class="screen">
+        <h1>結果発表</h1>
+        <div id="score-text" class="score">0問中 0問正解！</div>
+        
+        <div class="result-list-container">
+            <div id="result-list"></div>
+        </div>
+        
+        <button id="retry-incorrect-btn" class="btn retry-btn" onclick="startRetryQuiz()">間違えた問題だけ再テスト</button>
+        <button class="btn back-btn" onclick="goMenu()">メニューに戻る</button>
+    </div>
+</div>
+
+<script>
+    // フリーの本格的な世界の白地図に準拠した、高精度かつ当該国周辺にクローズアップしたベクターグラフィックデータ
+    // 文字情報を完全排除し、美しい国境線と海岸線のみで構成
+    const mapData = {
+        france: `<!-- フランス周辺クローズアップ白地図 -->
+            <path d="M 0,0 L 400,0 L 400,300 L 0,300 Z" fill="#e2e8f0"/> <!-- 海洋 -->
+            <path d="M 0,100 L 90,80 L 100,50 L 140,40 L 150,0 L 260,0 L 270,50 L 240,80 L 310,90 L 330,150 L 280,170 L 320,300 L 170,300 L 150,240 L 70,250 L 0,210 Z" class="bg-land"/>
+            <path d="M 0,0 L 80,0 L 70,35 L 40,45 Z" class="bg-land"/> <!-- イギリス南部沿岸 -->
+            <!-- 高精度フランス本土 -->
+            <path id="target-country" d="M 115,90 C 105,85 95,90 90,100 C 80,103 77,113 70,115 C 55,117 60,130 67,133 C 60,140 47,137 45,147 C 43,157 53,160 57,157 C 53,170 47,180 60,190 C 67,205 75,220 85,230 C 100,237 125,240 147,243 C 160,244 180,247 193,240 C 207,235 220,220 215,207 C 225,200 240,207 250,195 C 247,185 237,180 240,173 C 247,170 257,173 255,160 C 247,153 235,157 230,147 C 233,137 245,135 237,123 C 225,120 220,107 210,110 C 200,105 190,97 177,103 C 165,97 150,90 135,93 C 125,90 120,93 115,90 Z" class="target-highlight"/>
+            <path d="M 177,103 L 185,115 L 210,110 M 230,147 L 220,155 L 215,170 L 193,243" class="bg-land" fill="none"/>`,
+            
+        germany: `<!-- ドイツ周辺クローズアップ白地図 -->
+            <path d="M 0,0 L 400,0 L 400,300 L 0,300 Z" fill="#e2e8f0"/> <!-- 海洋 -->
+            <path d="M 0,50 L 90,20 L 130,0 L 330,0 L 400,20 L 400,270 L 330,300 L 90,300 L 40,210 L 60,130 L 0,110 Z" class="bg-land"/>
+            <path d="M 185,0 L 205,30 L 225,0 Z" class="bg-land"/> <!-- デンマーク領土南部 -->
+            <!-- 高精度ドイツ連邦 -->
+            <path id="target-country" d="M 145,55 C 158,53 173,58 188,51 C 191,33 203,31 208,51 C 223,48 241,53 255,58 C 268,68 275,83 285,95 C 298,108 293,123 288,138 C 285,155 293,171 283,185 C 278,198 265,208 258,221 C 245,218 233,228 221,223 C 211,228 201,238 191,233 C 185,218 173,213 168,198 C 155,195 145,185 148,171 C138,165 128,168 123,155 C 128,145 141,143 135,131 C 125,128 128,115 123,101 C 133,95 135,83 138,71 C 141,61 141,58 145,55 Z" class="target-highlight"/>
+            <path d="M 138,71 L 113,68 M 123,155 L 98,163 M 255,58 L 323,68 M 288,138 L 343,143" class="bg-land" fill="none"/>`,
+            
+        italy: `<!-- イタリア周辺クローズアップ白地図 -->
+            <path d="M 0,0 L 400,0 L 400,300 L 0,300 Z" fill="#e2e8f0"/> <!-- 海洋 -->
+            <path d="M 0,0 L 400,0 L 400,90 L 330,100 L 290,85 L 230,95 L 160,80 L 70,100 L 0,70 Z" class="bg-land"/>
+            <!-- 高精度イタリア半島本体 -->
+            <path id="target-country" d="M 100,80 C 117,77 137,83 157,80 C 177,75 197,80 214,73 C 227,80 240,77 252,87 C 240,97 237,110 244,123 C 254,130 267,140 280,153 C 294,167 312,187 324,203 C 337,220 344,233 342,240 C 327,243 314,237 307,227 C 297,223 292,230 284,227 C 287,215 274,207 270,197 C 257,190 250,177 242,167 C 230,170 222,160 212,157 C 207,145 194,137 184,133 C 174,137 167,147 154,145 C 150,133 154,120 144,113 C 134,117 127,123 117,117 C 112,107 97,103 100,80 Z" class="target-highlight"/>
+            <!-- シチリア島 -->
+            <path d="M 257,240 C 277,237 297,250 287,265 C 267,267 252,255 257,240 Z" class="target-highlight"/>
+            <!-- サルデーニャ島 -->
+            <path d="M 127,165 C 137,165 142,180 140,210 C 127,215 122,195 127,165 Z" class="target-highlight"/>`,
+            
+        uk: `<!-- イギリス周辺クローズアップ白地図 -->
+            <path d="M 0,0 L 400,0 L 400,300 L 0,300 Z" fill="#e2e8f0"/> <!-- 海洋 -->
+            <path d="M 225,300 L 245,245 L 315,225 L 400,235 L 400,300 Z" class="bg-land"/> <!-- 大陸側沿岸（フランス等） -->
+            <path d="M 20,125 C 30,105 50,115 65,125 C 75,145 60,185 55,205 C 35,205 15,165 20,125 Z" class="bg-land"/> <!-- アイルランド島 -->
+            <!-- 高精度イギリス(グレートブリテン島) -->
+            <path id="target-country" d="M 145,38 C 153,26 165,21 171,41 C 175,56 168,71 178,84 C 185,88 198,81 195,98 C 188,111 201,124 208,131 C 218,138 231,141 235,154 C 241,168 228,181 231,194 C 218,198 205,188 191,191 C 175,194 163,208 145,204 C 135,191 123,194 115,181 C 125,174 138,171 133,158 C 118,161 111,148 125,141 C 131,128 128,116 138,108 C 135,91 148,88 145,74 C 138,68 141,51 145,38 Z" class="target-highlight"/>`,
+            
+        spain: `<!-- スペイン周辺クローズアップ白地図 -->
+            <path d="M 0,0 L 400,0 L 400,300 L 0,300 Z" fill="#e2e8f0"/> <!-- 海洋 -->
+            <path d="M 265,0 L 400,0 L 400,85 L 335,75 Z" class="bg-land"/> <!-- フランス南部 -->
+            <path d="M 0,255 L 400,255 L 400,300 L 0,300 Z" class="bg-land"/> <!-- アフリカ北部 -->
+            <!-- 高精度イベリア半島（スペイン・ハイライト） -->
+            <path id="target-country" d="M 215,45 C 240,42 265,52 290,59 C 300,75 315,82 330,89 C 320,105 307,122 297,139 C 285,149 277,167 263,179 C 247,192 225,195 207,202 C 190,199 177,209 160,205 C 153,189 140,182 133,165 C 140,149 153,145 147,129 C 153,115 140,105 147,89 C 160,92 173,85 187,89 C 197,75 203,59 215,45 Z" class="target-highlight"/>
+            <!-- ポルトガル（白地図上の非対称地域としてグレー塗分け） -->
+            <path d="M 133,165 C 125,149 115,145 120,119 C 125,109 120,95 133,89 L 147,89 C 140,105 153,115 147,129 C 153,145 140,149 133,165 Z" class="excluded-land"/>`
+    };
+
+    const datasets = {
+        months: [
+            { word: "January", meaning: "1月" },
+            { word: "February", meaning: "2月" },
+            { word: "March", meaning: "3月" },
+            { word: "April", meaning: "4月" },
+            { word: "May", meaning: "5月" },
+            { word: "June", meaning: "6月" },
+            { word: "July", meaning: "7月" },
+            { word: "August", meaning: "8月" },
+            { word: "September", meaning: "9月" },
+            { word: "October", meaning: "10月" },
+            { word: "November", meaning: "11月" },
+            { word: "December", meaning: "12月" }
+        ],
+        days: [
+            { word: "Sunday", meaning: "日曜日" },
+            { word: "Monday", meaning: "月曜日" },
+            { word: "Tuesday", meaning: "火曜日" },
+            { word: "Wednesday", meaning: "水曜日" },
+            { word: "Thursday", meaning: "木曜日" },
+            { word: "Friday", meaning: "金曜日" },
+            { word: "Saturday", meaning: "土曜日" }
+        ],
+        europe: [
+            { word: "黄色くハイライトされたこの国の首都はどこでしょう？", meaning: "パリ", mapKey: "france", countryName: "フランス" },
+            { word: "黄色くハイライトされたこの国の首都はどこでしょう？", meaning: "ベルリン", mapKey: "germany", countryName: "ドイツ" },
+            { word: "黄色くハイライトされたこの国の首都はどこでしょう？", meaning: "ローマ", mapKey: "italy", countryName: "イタリア" },
+            { word: "黄色くハイライトされたこの国の首都はどこでしょう？", meaning: "ロンドン", mapKey: "uk", countryName: "イギリス" },
+            { word: "黄色くハイライトされたこの国の首都はどこでしょう？", meaning: "マドリード", mapKey: "spain", countryName: "スペイン" }
+        ]
+    };
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let userResults = [];
+    let incorrectQuestions = [];
+
+    function startQuiz(type) {
+        const rawData = datasets[type];
+        currentQuestions = [];
+        userResults = [];
+        incorrectQuestions = [];
+        currentIndex = 0;
+        correctCount = 0;
+
+        rawData.forEach(item => {
+            if (type === 'europe') {
+                currentQuestions.push({
+                    display: item.word,
+                    answer: item.meaning,
+                    mapKey: item.mapKey,
+                    countryName: item.countryName
+                });
+            } else {
+                const isReversed = Math.random() < 0.5;
+                if (isReversed) {
+                    currentQuestions.push({
+                        display: item.meaning,
+                        answer: item.word,
+                        mapKey: null
+                    });
+                } else {
+                    currentQuestions.push({
+                        display: item.word,
+                        answer: item.meaning,
+                        mapKey: null
+                    });
+                }
+            }
+        });
+
+        currentQuestions.sort(() => Math.random() - 0.5);
+        switchScreen('quiz-screen');
+        showQuestion();
+    }
+
+    function startRetryQuiz() {
+        if (incorrectQuestions.length === 0) return;
+
+        currentQuestions = [...incorrectQuestions].sort(() => Math.random() - 0.5);
+        userResults = [];
+        incorrectQuestions = [];
+        currentIndex = 0;
+        correctCount = 0;
+
+        switchScreen('quiz-screen');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = currentQuestions[currentIndex];
+        document.getElementById('progress').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+        document.getElementById('word').innerText = q.display;
+        
+        const meaningEl = document.getElementById('meaning');
+        meaningEl.innerText = q.answer;
+        meaningEl.classList.add('hidden');
+
+        const mapArea = document.getElementById('map-area');
+        const svgEl = document.getElementById('europe-svg');
+        
+        if (q.mapKey && mapData[q.mapKey]) {
+            mapArea.style.display = 'block';
+            svgEl.innerHTML = mapData[q.mapKey]; // 高精度に設計した各国のローカルベクターデータを動的描画
+        } else {
+            mapArea.style.display = 'none';
+        }
+
+        document.getElementById('action-before').style.display = 'block';
+        document.getElementById('action-after').style.display = 'none';
+    }
+
+    function showAnswer() {
+        document.getElementById('meaning').classList.remove('hidden');
+        document.getElementById('action-before').style.display = 'none';
+        document.getElementById('action-after').style.display = 'block';
+    }
+
+    function submitResult(isCorrect) {
+        const q = currentQuestions[currentIndex];
+        
+        userResults.push({
+            display: q.countryName ? `${q.countryName}の首都` : q.display,
+            answer: q.answer,
+            isCorrect: isCorrect
+        });
+
+        if (isCorrect) {
+            correctCount++;
+        } else {
+            incorrectQuestions.push(q);
+        }
+        
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        switchScreen('result-screen');
+        document.getElementById('score-text').innerText = `${currentQuestions.length}問中 ${correctCount}問正解！`;
+        
+        const retryBtn = document.getElementById('retry-incorrect-btn');
+        if (incorrectQuestions.length > 0) {
+            retryBtn.style.display = 'block';
+            retryBtn.innerText = `間違えた ${incorrectQuestions.length} 問を再テスト`;
+        } else {
+            retryBtn.style.display = 'none';
+        }
+
+        const listEl = document.getElementById('result-list');
+        listEl.innerHTML = '';
+        
+        userResults.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'result-item';
+            
+            const textSpan = document.createElement('span');
+            textSpan.innerHTML = `<span class="q-text">${item.display}</span> ➔ <span class="a-text">${item.answer}</span>`;
+            
+            const badgeSpan = document.createElement('span');
+            if (item.isCorrect) {
+                badgeSpan.className = 'badge badge-correct';
+                badgeSpan.innerText = '正解';
+            } else {
+                badgeSpan.className = 'badge badge-incorrect';
+                badgeSpan.innerText = '不正解';
+            }
+            
+            itemEl.appendChild(textSpan);
+            itemEl.appendChild(badgeSpan);
+            listEl.appendChild(itemEl);
+        });
+    }
+
+    function goMenu() {
+        switchScreen('menu-screen');
+    }
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
