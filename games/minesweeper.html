@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>マインスイーパー</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css">
+<style>
+:root{
+  --color-background-primary:#ffffff;
+  --color-background-secondary:#eeece4;
+  --color-background-danger:#fcebeb;
+  --color-text-primary:#1a1a1a;
+  --color-text-secondary:#5f5e5a;
+  --color-text-tertiary:#9a9990;
+  --color-text-danger:#a32d2d;
+  --color-text-success:#3b6d11;
+  --color-text-info:#185fa5;
+  --color-border-tertiary:rgba(0,0,0,0.18);
+  --color-border-info:#378ade;
+  --border-radius-md:8px;
+  --font-mono:"SF Mono",Consolas,monospace;
+  --n1:#185FA5;--n2:#3B6D11;--n3:#A32D2D;--n4:#3C3489;--n5:#712B13;--n6:#0F6E56;--n7:#2C2C2A;--n8:#5F5E5A;
+}
+html[data-theme="dark"]{
+  --color-background-primary:#1e1e1e;
+  --color-background-secondary:#2b2a28;
+  --color-background-danger:#3a1f1f;
+  --color-text-primary:#f0f0f0;
+  --color-text-secondary:#b3b1a8;
+  --color-text-tertiary:#7d7c76;
+  --color-text-danger:#f09595;
+  --color-text-success:#97c459;
+  --color-text-info:#85b7eb;
+  --color-border-tertiary:rgba(255,255,255,0.18);
+  --color-border-info:#378ade;
+  --n1:#85B7EB;--n2:#97C459;--n3:#F09595;--n4:#AFA9EC;--n5:#F0997B;--n6:#5DCAA5;--n7:#D3D1C7;--n8:#B4B2A9;
+}
+html[data-theme="dark"] body{background:#141414;}
+.cfield{display:flex;flex-direction:column;gap:4px;min-width:68px;}
+.cflabel{font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--color-text-secondary);}
+.cinput{background:var(--color-background-primary);border:1px solid var(--color-border-tertiary);border-radius:6px;color:var(--color-text-primary);font-size:15px;font-family:inherit;padding:7px 9px;width:100%;-moz-appearance:textfield;}
+.cinput::-webkit-outer-spin-button,.cinput::-webkit-inner-spin-button{-webkit-appearance:none;}
+.cinput:focus{outline:none;border-color:var(--color-border-info);}
+.cstart{background:var(--color-text-info);color:white;border:none;border-radius:8px;padding:7px 16px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;height:36px;white-space:nowrap;flex-shrink:0;}
+.cstart:hover{opacity:0.88;}
+.cstart:active{transform:scale(0.97);}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--color-text-primary);
+  display:flex;justify-content:center;padding:32px 16px;}
+button{font-family:inherit;background:transparent;border:0.5px solid var(--color-border-tertiary);
+  border-radius:var(--border-radius-md);color:var(--color-text-primary);cursor:pointer;}
+button:hover{background:var(--color-background-secondary);}
+button:active{transform:scale(0.98);}
+.cell{display:flex;align-items:center;justify-content:center;user-select:none;font-weight:500;cursor:pointer;}
+.cell:hover{filter:brightness(0.96);}
+.diffbtn{font-size:13px;}
+</style>
+</head>
+<body>
+<div style="max-width:680px;width:100%;">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;">
+    <h1 style="font-size:20px;font-weight:500;margin:0;">マインスイーパー</h1>
+    <button id="themeBtn" onclick="toggleTheme()" style="font-size:12px;padding:5px 11px;white-space:nowrap;"></button>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:8px;">
+    <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="diffButtons"></div>
+      <button class="diffbtn" id="customBtn" onclick="toggleCustomMode()" style="padding:6px 12px;">カスタム</button>
+    </div>
+    <div id="statusMsg" style="font-size:14px;font-weight:500;min-width:80px;text-align:right;"></div>
+  </div>
+  <!-- カスタム設定パネル -->
+  <div id="customPanel" style="display:none;background:var(--color-background-secondary);border-radius:8px;padding:12px 14px;margin-bottom:12px;">
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end;">
+      <div class="cfield"><div class="cflabel">行数</div>
+        <input type="number" id="cRows" class="cinput" value="16" min="3" max="100" oninput="updateCustomHint()"></div>
+      <div class="cfield"><div class="cflabel">列数</div>
+        <input type="number" id="cCols" class="cinput" value="20" min="3" max="100" oninput="updateCustomHint()"></div>
+      <div class="cfield"><div class="cflabel">地雷数</div>
+        <input type="number" id="cMines" class="cinput" value="60" min="1" max="9999" oninput="updateCustomHint()"></div>
+      <div class="cfield"><div class="cflabel">セルサイズ</div>
+        <input type="number" id="cSize" class="cinput" value="26" min="14" max="60"></div>
+      <button class="cstart" onclick="startCustomGame()">▶ 開始</button>
+    </div>
+    <div id="customHint" style="font-size:11px;color:var(--color-text-secondary);margin-top:8px;"></div>
+  </div>
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;padding:0 4px;">
+    <div id="mineCounter" style="font-family:var(--font-mono);font-size:18px;font-weight:500;min-width:50px;"></div>
+    <button id="resetBtn" aria-label="リセット" style="width:40px;height:40px;padding:0;display:flex;align-items:center;justify-content:center;"></button>
+    <div id="timerDisplay" style="font-family:var(--font-mono);font-size:18px;font-weight:500;min-width:50px;text-align:right;"></div>
+  </div>
+  <div style="overflow-x:auto;padding-bottom:4px;">
+    <div id="board" style="display:inline-grid;background:var(--color-border-tertiary);padding:1px;gap:1px;border-radius:var(--border-radius-md);"></div>
+  </div>
+  <p style="font-size:13px;color:var(--color-text-secondary);margin-top:16px;">
+    クリックでセルを開く / 右クリック（モバイルは長押し）で旗を立てる
+  </p>
+</div>
+<script>
+const DIFFICULTIES = {
+  easy:{rows:9,cols:9,mines:10,cellSize:36,label:'初級'},
+  medium:{rows:16,cols:16,mines:40,cellSize:28,label:'中級'},
+  hard:{rows:16,cols:30,mines:99,cellSize:20,label:'上級'},
+  extreme:{rows:32,cols:60,mines:400,cellSize:14,label:'超上級'}
+};
+const NEIGHBORS=[[-1,-1],[-1,0],[-1,1],[0,-1],[0,1],[1,-1],[1,0],[1,1]];
+
+let currentDiff='easy';
+let rows, cols, mineCount, cellSize;
+let grid=[];
+let gameState='ready';
+let flagsCount=0;
+let timerSeconds=0;
+let timerInterval=null;
+let lastClickedMine=null;
+
+function initGame(diffKey){
+  currentDiff=diffKey;
+  const d=DIFFICULTIES[diffKey];
+  rows=d.rows; cols=d.cols; mineCount=d.mines; cellSize=d.cellSize;
+  grid=[];
+  for(let r=0;r<rows;r++){
+    const row=[];
+    for(let c=0;c<cols;c++) row.push({mine:false,revealed:false,flagged:false,adjacent:0});
+    grid.push(row);
+  }
+  gameState='ready';
+  flagsCount=0;
+  timerSeconds=0;
+  lastClickedMine=null;
+  stopTimer();
+  renderDiffButtons();
+  renderAll();
+}
+
+function startTimer(){
+  stopTimer();
+  timerInterval=setInterval(()=>{
+    timerSeconds=Math.min(timerSeconds+1,999);
+    document.getElementById('timerDisplay').textContent=String(timerSeconds).padStart(3,'0');
+  },1000);
+}
+function stopTimer(){ if(timerInterval){clearInterval(timerInterval);timerInterval=null;} }
+
+function placeMines(er,ec){
+  const excluded=new Set();
+  excluded.add(er+','+ec);
+  for(const [dr,dc] of NEIGHBORS){
+    const nr=er+dr,nc=ec+dc;
+    if(nr>=0&&nr<rows&&nc>=0&&nc<cols) excluded.add(nr+','+nc);
+  }
+  let placed=0;
+  while(placed<mineCount){
+    const r=Math.floor(Math.random()*rows);
+    const c=Math.floor(Math.random()*cols);
+    const key=r+','+c;
+    if(excluded.has(key)||grid[r][c].mine) continue;
+    grid[r][c].mine=true;
+    placed++;
+  }
+}
+
+function computeAdjacents(){
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    if(grid[r][c].mine){ grid[r][c].adjacent=-1; continue; }
+    let count=0;
+    for(const [dr,dc] of NEIGHBORS){
+      const nr=r+dr,nc=c+dc;
+      if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&grid[nr][nc].mine) count++;
+    }
+    grid[r][c].adjacent=count;
+  }
+}
+
+function floodReveal(sr,sc){
+  const stack=[[sr,sc]];
+  while(stack.length){
+    const [r,c]=stack.pop();
+    const cell=grid[r][c];
+    if(cell.revealed||cell.flagged) continue;
+    cell.revealed=true;
+    if(cell.adjacent===0){
+      for(const [dr,dc] of NEIGHBORS){
+        const nr=r+dr,nc=c+dc;
+        if(nr>=0&&nr<rows&&nc>=0&&nc<cols&&!grid[nr][nc].revealed) stack.push([nr,nc]);
+      }
+    }
+  }
+}
+
+function checkWin(){
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    if(!grid[r][c].mine && !grid[r][c].revealed) return false;
+  }
+  return true;
+}
+
+function revealAllMines(){
+  for(let r=0;r<rows;r++) for(let c=0;c<cols;c++){
+    if(grid[r][c].mine) grid[r][c].revealed=true;
+  }
+}
+
+function reveal(r,c){
+  if(gameState==='lost'||gameState==='won') return;
+  const cell=grid[r][c];
+  if(cell.revealed||cell.flagged) return;
+  if(gameState==='ready'){
+    placeMines(r,c);
+    computeAdjacents();
+    gameState='playing';
+    startTimer();
+  }
+  if(cell.mine){
+    lastClickedMine=[r,c];
+    cell.revealed=true;
+    gameState='lost';
+    stopTimer();
+    revealAllMines();
+    renderAll();
+    return;
+  }
+  floodReveal(r,c);
+  if(checkWin()){
+    gameState='won';
+    stopTimer();
+    for(let rr=0;rr<rows;rr++) for(let cc=0;cc<cols;cc++){
+      if(grid[rr][cc].mine) grid[rr][cc].flagged=true;
+    }
+    flagsCount=mineCount;
+  }
+  renderAll();
+}
+
+function toggleFlag(r,c){
+  if(gameState==='lost'||gameState==='won') return;
+  const cell=grid[r][c];
+  if(cell.revealed) return;
+  cell.flagged=!cell.flagged;
+  flagsCount+=cell.flagged?1:-1;
+  renderAll();
+}
+
+function renderDiffButtons(){
+  const container=document.getElementById('diffButtons');
+  container.innerHTML='';
+  Object.keys(DIFFICULTIES).forEach(key=>{
+    const btn=document.createElement('button');
+    btn.textContent=DIFFICULTIES[key].label;
+    btn.className='diffbtn';
+    btn.style.padding='6px 12px';
+    if(key===currentDiff){
+      btn.style.borderColor='var(--color-border-info)';
+      btn.style.color='var(--color-text-info)';
+    }
+    btn.addEventListener('click',()=>{
+      document.getElementById('customPanel').style.display='none';
+      const cb=document.getElementById('customBtn');
+      if(cb){cb.style.borderColor='';cb.style.color='';}
+      initGame(key);
+    });
+    container.appendChild(btn);
+  });
+  // カスタムボタンのハイライトをリセット
+  const cb=document.getElementById('customBtn');
+  if(cb&&currentDiff!=='custom'){cb.style.borderColor='';cb.style.color='';}
+}
+
+function renderAll(){
+  const remaining=mineCount-flagsCount;
+  document.getElementById('mineCounter').textContent=String(remaining).padStart(3,'0');
+  document.getElementById('timerDisplay').textContent=String(timerSeconds).padStart(3,'0');
+  const statusEl=document.getElementById('statusMsg');
+  if(gameState==='lost'){ statusEl.textContent='ゲームオーバー'; statusEl.style.color='var(--color-text-danger)'; }
+  else if(gameState==='won'){ statusEl.textContent='クリア！'; statusEl.style.color='var(--color-text-success)'; }
+  else { statusEl.textContent=''; }
+  const resetBtn=document.getElementById('resetBtn');
+  let iconClass='ti-mood-smile';
+  if(gameState==='lost') iconClass='ti-mood-sad';
+  else if(gameState==='won') iconClass='ti-mood-happy';
+  resetBtn.innerHTML='<i class="ti '+iconClass+'" style="font-size:20px;" aria-hidden="true"></i>';
+  renderBoard();
+}
+
+function renderBoard(){
+  const board=document.getElementById('board');
+  board.style.gridTemplateColumns='repeat('+cols+', '+cellSize+'px)';
+  board.style.gridAutoRows=cellSize+'px';
+  const fontSize=Math.max(11,Math.floor(cellSize*0.5));
+  let html='';
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      const cell=grid[r][c];
+      let bg='var(--color-background-secondary)';
+      let content='';
+      if(cell.revealed){
+        bg='var(--color-background-primary)';
+        if(cell.mine){
+          bg=(lastClickedMine&&lastClickedMine[0]===r&&lastClickedMine[1]===c)?'var(--color-background-danger)':'var(--color-background-secondary)';
+          content='<i class="ti ti-bomb" style="font-size:'+(fontSize+4)+'px;color:var(--color-text-primary);" aria-hidden="true"></i>';
+        } else if(cell.adjacent>0){
+          content='<span style="color:var(--n'+cell.adjacent+');font-size:'+fontSize+'px;">'+cell.adjacent+'</span>';
+        }
+      } else if(cell.flagged){
+        const flagColor=(gameState==='lost'&&!cell.mine)?'var(--color-text-tertiary)':'var(--color-text-danger)';
+        content='<i class="ti ti-flag" style="font-size:'+(fontSize+2)+'px;color:'+flagColor+';" aria-hidden="true"></i>';
+      }
+      html+='<div class="cell" data-r="'+r+'" data-c="'+c+'" style="width:'+cellSize+'px;height:'+cellSize+'px;background:'+bg+';border-radius:2px;">'+content+'</div>';
+    }
+  }
+  board.innerHTML=html;
+}
+
+const boardEl=document.getElementById('board');
+let longPressTriggered=false;
+let touchTimer=null;
+
+boardEl.addEventListener('click',(e)=>{
+  const cellEl=e.target.closest('.cell');
+  if(!cellEl) return;
+  if(longPressTriggered){ longPressTriggered=false; return; }
+  reveal(+cellEl.dataset.r, +cellEl.dataset.c);
+});
+boardEl.addEventListener('contextmenu',(e)=>{
+  e.preventDefault();
+  const cellEl=e.target.closest('.cell');
+  if(!cellEl) return;
+  toggleFlag(+cellEl.dataset.r, +cellEl.dataset.c);
+});
+boardEl.addEventListener('touchstart',(e)=>{
+  const cellEl=e.target.closest('.cell');
+  if(!cellEl) return;
+  longPressTriggered=false;
+  touchTimer=setTimeout(()=>{
+    longPressTriggered=true;
+    toggleFlag(+cellEl.dataset.r, +cellEl.dataset.c);
+  },500);
+},{passive:true});
+boardEl.addEventListener('touchend',()=>{ clearTimeout(touchTimer); });
+
+document.getElementById('resetBtn').addEventListener('click',()=>initGame(currentDiff));
+
+// ── テーマ ─────────────────────────────────────────────
+let isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = isDark ? '☀️ ライト' : '🌙 ダーク';
+}
+function toggleTheme(){
+  isDark = !isDark;
+  applyTheme();
+}
+
+// ── カスタムモード ─────────────────────────────────────
+function toggleCustomMode(){
+  const panel=document.getElementById('customPanel');
+  const isVisible=panel.style.display!=='none';
+  panel.style.display=isVisible?'none':'block';
+  if(!isVisible){
+    // 標準ボタンのハイライトを外してカスタムをハイライト
+    document.querySelectorAll('.diffbtn').forEach(b=>{b.style.borderColor='';b.style.color='';});
+    const cb=document.getElementById('customBtn');
+    cb.style.borderColor='var(--color-border-info)';
+    cb.style.color='var(--color-text-info)';
+    updateCustomHint();
+  }
+}
+
+function startCustomGame(){
+  const r=Math.max(3,Math.min(100,parseInt(document.getElementById('cRows').value)||9));
+  const c=Math.max(3,Math.min(100,parseInt(document.getElementById('cCols').value)||9));
+  const s=Math.max(14,Math.min(60,parseInt(document.getElementById('cSize').value)||26));
+  let m=Math.max(1,parseInt(document.getElementById('cMines').value)||10);
+  m=Math.min(m,r*c-1);
+  DIFFICULTIES.custom={rows:r,cols:c,mines:m,cellSize:s,label:'カスタム'};
+  currentDiff='custom';
+  initGame('custom');
+}
+
+function updateCustomHint(){
+  const r=parseInt(document.getElementById('cRows').value)||0;
+  const c=parseInt(document.getElementById('cCols').value)||0;
+  const m=parseInt(document.getElementById('cMines').value)||0;
+  const max=Math.max(0,r*c-1);
+  const el=document.getElementById('customHint');
+  if(r>0&&c>0){
+    const pct=max>0?Math.round(m/max*100):0;
+    el.textContent=`地雷率：${pct}%（最大 ${max} 個）`;
+    document.getElementById('cMines').style.borderColor=m>max?'var(--color-text-danger)':'';
+  } else { el.textContent=''; }
+}
+
+applyTheme();
+initGame('easy');
+</script>
+</body>
+</html>
