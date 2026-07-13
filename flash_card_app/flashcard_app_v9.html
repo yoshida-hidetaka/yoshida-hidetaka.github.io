@@ -78,6 +78,54 @@
             display: block;
             margin: 0 auto;
             border-radius: 6px;
+            cursor: zoom-in;
+        }
+        /* ── 拡大ライトボックス ── */
+        #lightbox {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            padding: 16px;
+        }
+        #lightbox.open {
+            display: flex;
+        }
+        #lightbox img {
+            max-width: 95vw;
+            max-height: 90vh;
+            border-radius: 10px;
+            box-shadow: 0 8px 40px rgba(0,0,0,0.6);
+            cursor: zoom-out;
+            object-fit: contain;
+        }
+        #lightbox-close {
+            position: fixed;
+            top: 14px;
+            right: 18px;
+            font-size: 32px;
+            color: white;
+            cursor: pointer;
+            line-height: 1;
+            font-weight: 300;
+            user-select: none;
+        }
+        .map-container {
+            position: relative;
+        }
+        .zoom-hint {
+            position: absolute;
+            bottom: 14px;
+            right: 14px;
+            background: rgba(0,0,0,0.45);
+            color: white;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 99px;
+            pointer-events: none;
         }
         .word-display {
             font-size: 22px;
@@ -167,7 +215,7 @@
         <button class="menu-btn" onclick="startQuiz('months', 'en2ja')">中１英単語（月）　英→日</button>
         <button class="menu-btn" onclick="startQuiz('days',   'ja2en')">中１英単語（曜日）　日→英</button>
         <button class="menu-btn" onclick="startQuiz('days',   'en2ja')">中１英単語（曜日）　英→日</button>
-        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパの国・首都クイズ</button>
+        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパの国・首都</button>
     </div>
 
     <!-- 2. クイズ画面 -->
@@ -176,7 +224,8 @@
         
         <!-- 各国の地図画像を読み込むコンテナ -->
         <div id="map-area" class="map-container" style="display: none;">
-            <img id="country-img" class="map-img" src="" alt="白地図問題">
+            <img id="country-img" class="map-img" src="" alt="白地図問題" onclick="openLightbox(this.src)">
+            <div class="zoom-hint">🔍 タップで拡大</div>
         </div>
 
         <div id="word" class="word-display">-</div>
@@ -209,6 +258,12 @@
         <button id="retry-incorrect-btn" class="btn retry-btn" onclick="startRetryQuiz()">間違えた問題だけ再テスト</button>
         <button class="btn back-btn" onclick="goMenu()">メニューに戻る</button>
     </div>
+</div>
+
+<!-- ── 拡大ライトボックス ── -->
+<div id="lightbox" onclick="closeLightbox()">
+    <span id="lightbox-close" onclick="closeLightbox()">✕</span>
+    <img id="lightbox-img" src="" alt="拡大画像">
 </div>
 
 <script>
@@ -406,6 +461,20 @@
     function goMenu() {
         switchScreen('menu-screen');
     }
+
+    function openLightbox(src) {
+        document.getElementById('lightbox-img').src = src;
+        document.getElementById('lightbox').classList.add('open');
+    }
+
+    function closeLightbox() {
+        document.getElementById('lightbox').classList.remove('open');
+    }
+
+    // キーボードのEscキーでも閉じられるように
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeLightbox();
+    });
 
     function switchScreen(screenId) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
