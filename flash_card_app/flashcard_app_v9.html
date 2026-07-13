@@ -163,8 +163,10 @@
     <div id="menu-screen" class="screen active">
         <h1>暗記アプリ</h1>
         <p style="color: #64748b;">問題を選択してください</p>
-        <button class="menu-btn" onclick="startQuiz('months')">中１英単語（月）</button>
-        <button class="menu-btn" onclick="startQuiz('days')">中１英単語（曜日）</button>
+        <button class="menu-btn" onclick="startQuiz('months', 'ja2en')">中１英単語（月）　日→英</button>
+        <button class="menu-btn" onclick="startQuiz('months', 'en2ja')">中１英単語（月）　英→日</button>
+        <button class="menu-btn" onclick="startQuiz('days',   'ja2en')">中１英単語（曜日）　日→英</button>
+        <button class="menu-btn" onclick="startQuiz('days',   'en2ja')">中１英単語（曜日）　英→日</button>
         <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパの国・首都クイズ</button>
     </div>
 
@@ -252,8 +254,7 @@
             { meaning: "モスクワ",        imgFile: "russia.png",   countryName: "ロシア" },
             { meaning: "プラハ",          imgFile: "czechia.png",  countryName: "チェコ" },
             { meaning: "ブカレスト",      imgFile: "romania.png",  countryName: "ルーマニア" },
-            { meaning: "レイキャビク",    imgFile: "iceland.png",  countryName: "アイスランド" },
-            { meaning: "ダブリン",        imgFile: "ireland.png",  countryName: "アイルランド" }
+            { meaning: "レイキャビク",    imgFile: "iceland.png",  countryName: "アイスランド" }
         ]
     };
 
@@ -263,7 +264,7 @@
     let userResults = [];
     let incorrectQuestions = [];
 
-    function startQuiz(type) {
+    function startQuiz(type, direction) {
         const rawData = datasets[type];
         currentQuestions = [];
         userResults = [];
@@ -279,21 +280,18 @@
                     imgFile: item.imgFile,
                     countryName: item.countryName
                 });
+            } else if (direction === 'ja2en') {
+                currentQuestions.push({
+                    display: item.meaning,
+                    answer: item.word,
+                    imgFile: null
+                });
             } else {
-                const isReversed = Math.random() < 0.5;
-                if (isReversed) {
-                    currentQuestions.push({
-                        display: item.meaning,
-                        answer: item.word,
-                        imgFile: null
-                    });
-                } else {
-                    currentQuestions.push({
-                        display: item.word,
-                        answer: item.meaning,
-                        imgFile: null
-                    });
-                }
+                currentQuestions.push({
+                    display: item.word,
+                    answer: item.meaning,
+                    imgFile: null
+                });
             }
         });
 
