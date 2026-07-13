@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>一問一答 暗記アプリ</title>
+    <style>
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f8fafc;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+            padding: 30px;
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        h1 {
+            color: #1e293b;
+            font-size: 24px;
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+        .screen {
+            display: none;
+        }
+        .active {
+            display: block;
+        }
+        .menu-btn {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 12px 0;
+            font-size: 18px;
+            font-weight: 600;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .menu-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+        .progress {
+            font-size: 14px;
+            color: #64748b;
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .map-container {
+            margin: 15px 0;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 8px;
+            background-color: #f0fdf4;
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
+            min-height: 250px;
+        }
+        .map-img {
+            max-width: 100%;
+            max-height: 320px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            border-radius: 6px;
+        }
+        .word-display {
+            font-size: 22px;
+            font-weight: 700;
+            margin: 20px 0;
+            color: #0f172a;
+            min-height: 32px;
+            line-height: 1.5;
+        }
+        .meaning-display {
+            font-size: 28px;
+            color: #ef4444;
+            margin: 15px 0;
+            min-height: 36px;
+            font-weight: 700;
+        }
+        .hidden {
+            visibility: hidden;
+        }
+        .btn {
+            padding: 14px 32px;
+            font-size: 18px;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 10px;
+            transition: all 0.2s;
+        }
+        .btn:hover {
+            opacity: 0.9;
+        }
+        .primary-btn { background-color: #10b981; color: white; width: 85%; }
+        .success-btn { background-color: #10b981; color: white; }
+        .danger-btn { background-color: #ef4444; color: white; }
+        .back-btn { background-color: #64748b; color: white; margin-top: 12px; width: 85%; }
+        .retry-btn { background-color: #f59e0b; color: white; width: 85%; margin-top: 20px; }
+        
+        .score {
+            font-size: 22px;
+            margin: 20px 0;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .result-list-container {
+            text-align: left;
+            margin: 20px 0;
+            max-height: 250px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 12px;
+            background-color: #f8fafc;
+        }
+        .result-item {
+            padding: 10px;
+            border-bottom: 1px solid #edf2f7;
+            font-size: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .result-item:last-child {
+            border-bottom: none;
+        }
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+        }
+        .badge-correct { background-color: #10b981; }
+        .badge-incorrect { background-color: #ef4444; }
+        .q-text { color: #334155; font-weight: 500; }
+        .a-text { font-weight: 700; color: #0f172a; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 1. メニュー画面 -->
+    <div id="menu-screen" class="screen active">
+        <h1>暗記アプリ</h1>
+        <p style="color: #64748b;">問題を選択してください</p>
+        <button class="menu-btn" onclick="startQuiz('months')">中１英単語（月）</button>
+        <button class="menu-btn" onclick="startQuiz('days')">中１英単語（曜日）</button>
+        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパの国・首都クイズ</button>
+    </div>
+
+    <!-- 2. クイズ画面 -->
+    <div id="quiz-screen" class="screen">
+        <div id="progress" class="progress">1 / 5</div>
+        
+        <!-- 各国の地図画像を読み込むコンテナ -->
+        <div id="map-area" class="map-container" style="display: none;">
+            <img id="country-img" class="map-img" src="" alt="白地図問題">
+        </div>
+
+        <div id="word" class="word-display">-</div>
+        
+        <div id="meaning-box">
+            <div id="meaning" class="meaning-display hidden">-</div>
+        </div>
+
+        <!-- 初期状態：OKボタン -->
+        <div id="action-before">
+            <button class="btn primary-btn" onclick="showAnswer()">OK</button>
+        </div>
+
+        <!-- OKを押した後：正解・不正解ボタン -->
+        <div id="action-after" style="display: none;">
+            <button class="btn success-btn" onclick="submitResult(true)">正解 〇</button>
+            <button class="btn danger-btn" onclick="submitResult(false)">不正解 ×</button>
+        </div>
+    </div>
+
+    <!-- 3. 結果画面 -->
+    <div id="result-screen" class="screen">
+        <h1>結果発表</h1>
+        <div id="score-text" class="score">0問中 0問正解！</div>
+        
+        <div class="result-list-container">
+            <div id="result-list"></div>
+        </div>
+        
+        <button id="retry-incorrect-btn" class="btn retry-btn" onclick="startRetryQuiz()">間違えた問題だけ再テスト</button>
+        <button class="btn back-btn" onclick="goMenu()">メニューに戻る</button>
+    </div>
+</div>
+
+<script>
+    const datasets = {
+        months: [
+            { word: "January", meaning: "1月" },
+            { word: "February", meaning: "2月" },
+            { word: "March", meaning: "3月" },
+            { word: "April", meaning: "4月" },
+            { word: "May", meaning: "5月" },
+            { word: "June", meaning: "6月" },
+            { word: "July", meaning: "7月" },
+            { word: "August", meaning: "8月" },
+            { word: "September", meaning: "9月" },
+            { word: "October", meaning: "10月" },
+            { word: "November", meaning: "11月" },
+            { word: "December", meaning: "12月" }
+        ],
+        days: [
+            { word: "Sunday", meaning: "日曜日" },
+            { word: "Monday", meaning: "月曜日" },
+            { word: "Tuesday", meaning: "火曜日" },
+            { word: "Wednesday", meaning: "水曜日" },
+            { word: "Thursday", meaning: "木曜日" },
+            { word: "Friday", meaning: "金曜日" },
+            { word: "Saturday", meaning: "土曜日" }
+        ],
+        europe: [
+            { meaning: "パリ",           imgFile: "france.png",   countryName: "フランス" },
+            { meaning: "マドリード",      imgFile: "spain.png",    countryName: "スペイン" },
+            { meaning: "リスボン",        imgFile: "portugal.png", countryName: "ポルトガル" },
+            { meaning: "ベルリン",        imgFile: "germany.png",  countryName: "ドイツ" },
+            { meaning: "ロンドン",        imgFile: "uk.png",       countryName: "イギリス" },
+            { meaning: "ローマ",          imgFile: "italy.png",    countryName: "イタリア" },
+            { meaning: "オスロ",          imgFile: "norway.png",   countryName: "ノルウェー" },
+            { meaning: "ストックホルム",  imgFile: "sweden.png",   countryName: "スウェーデン" },
+            { meaning: "ヘルシンキ",      imgFile: "finland.png",  countryName: "フィンランド" },
+            { meaning: "ワルシャワ",      imgFile: "poland.png",   countryName: "ポーランド" },
+            { meaning: "コペンハーゲン",  imgFile: "denmark.png",  countryName: "デンマーク" },
+            { meaning: "ウィーン",        imgFile: "austria.png",  countryName: "オーストリア" },
+            { meaning: "ブダペスト",      imgFile: "hungary.png",  countryName: "ハンガリー" },
+            { meaning: "アテネ",          imgFile: "greece.png",   countryName: "ギリシア" },
+            { meaning: "モスクワ",        imgFile: "russia.png",   countryName: "ロシア" },
+            { meaning: "プラハ",          imgFile: "czechia.png",  countryName: "チェコ" },
+            { meaning: "ブカレスト",      imgFile: "romania.png",  countryName: "ルーマニア" },
+            { meaning: "レイキャビク",    imgFile: "iceland.png",  countryName: "アイスランド" },
+            { meaning: "ダブリン",        imgFile: "ireland.png",  countryName: "アイルランド" }
+        ]
+    };
+
+    let currentQuestions = [];
+    let currentIndex = 0;
+    let correctCount = 0;
+    let userResults = [];
+    let incorrectQuestions = [];
+
+    function startQuiz(type) {
+        const rawData = datasets[type];
+        currentQuestions = [];
+        userResults = [];
+        incorrectQuestions = [];
+        currentIndex = 0;
+        correctCount = 0;
+
+        rawData.forEach(item => {
+            if (type === 'europe') {
+                currentQuestions.push({
+                    display: "表示された画像の国名・首都はどこでしょうか？",
+                    answer: `${item.countryName}・${item.meaning}`,
+                    imgFile: item.imgFile,
+                    countryName: item.countryName
+                });
+            } else {
+                const isReversed = Math.random() < 0.5;
+                if (isReversed) {
+                    currentQuestions.push({
+                        display: item.meaning,
+                        answer: item.word,
+                        imgFile: null
+                    });
+                } else {
+                    currentQuestions.push({
+                        display: item.word,
+                        answer: item.meaning,
+                        imgFile: null
+                    });
+                }
+            }
+        });
+
+        currentQuestions.sort(() => Math.random() - 0.5);
+        switchScreen('quiz-screen');
+        showQuestion();
+    }
+
+    function startRetryQuiz() {
+        if (incorrectQuestions.length === 0) return;
+
+        currentQuestions = [...incorrectQuestions].sort(() => Math.random() - 0.5);
+        userResults = [];
+        incorrectQuestions = [];
+        currentIndex = 0;
+        correctCount = 0;
+
+        switchScreen('quiz-screen');
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const q = currentQuestions[currentIndex];
+        document.getElementById('progress').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+        document.getElementById('word').innerText = q.display;
+        
+        const meaningEl = document.getElementById('meaning');
+        meaningEl.innerText = q.answer;
+        meaningEl.classList.add('hidden');
+
+        const mapArea = document.getElementById('map-area');
+        const imgEl = document.getElementById('country-img');
+        
+        if (q.imgFile) {
+            mapArea.style.display = 'block';
+            imgEl.src = q.imgFile;
+        } else {
+            mapArea.style.display = 'none';
+            imgEl.src = "";
+        }
+
+        document.getElementById('action-before').style.display = 'block';
+        document.getElementById('action-after').style.display = 'none';
+    }
+
+    function showAnswer() {
+        document.getElementById('meaning').classList.remove('hidden');
+        document.getElementById('action-before').style.display = 'none';
+        document.getElementById('action-after').style.display = 'block';
+    }
+
+    function submitResult(isCorrect) {
+        const q = currentQuestions[currentIndex];
+        
+        userResults.push({
+            display: q.countryName ? "画像の国名・首都" : q.display,
+            answer: q.answer,
+            isCorrect: isCorrect
+        });
+
+        if (isCorrect) {
+            correctCount++;
+        } else {
+            incorrectQuestions.push(q);
+        }
+        
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        switchScreen('result-screen');
+        document.getElementById('score-text').innerText = `${currentQuestions.length}問中 ${correctCount}問正解！`;
+        
+        const retryBtn = document.getElementById('retry-incorrect-btn');
+        if (incorrectQuestions.length > 0) {
+            retryBtn.style.display = 'block';
+            retryBtn.innerText = `間違えた ${incorrectQuestions.length} 問を再テスト`;
+        } else {
+            retryBtn.style.display = 'none';
+        }
+
+        const listEl = document.getElementById('result-list');
+        listEl.innerHTML = '';
+        
+        userResults.forEach(item => {
+            const itemEl = document.createElement('div');
+            itemEl.className = 'result-item';
+            
+            const textSpan = document.createElement('span');
+            textSpan.innerHTML = `<span class="q-text">${item.display}</span> ➔ <span class="a-text">${item.answer}</span>`;
+            
+            const badgeSpan = document.createElement('span');
+            if (item.isCorrect) {
+                badgeSpan.className = 'badge badge-correct';
+                badgeSpan.innerText = '正解';
+            } else {
+                badgeSpan.className = 'badge badge-incorrect';
+                badgeSpan.innerText = '不正解';
+            }
+            
+            itemEl.appendChild(textSpan);
+            itemEl.appendChild(badgeSpan);
+            listEl.appendChild(itemEl);
+        });
+    }
+
+    function goMenu() {
+        switchScreen('menu-screen');
+    }
+
+    function switchScreen(screenId) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(screenId).classList.add('active');
+    }
+</script>
+
+</body>
+</html>
