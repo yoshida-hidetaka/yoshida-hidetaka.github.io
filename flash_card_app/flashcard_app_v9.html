@@ -202,6 +202,22 @@
         .badge-incorrect { background-color: #ef4444; }
         .q-text { color: #334155; font-weight: 500; }
         .a-text { font-weight: 700; color: #0f172a; }
+        .speak-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 20px;
+            margin-left: 10px;
+            padding: 3px 7px;
+            opacity: 0.6;
+            transition: opacity 0.15s, transform 0.1s, background 0.15s;
+            vertical-align: middle;
+            border-radius: 6px;
+            color: #3b82f6;
+            line-height: 1;
+        }
+        .speak-btn:hover  { opacity: 1; background: rgba(59,130,246,0.1); }
+        .speak-btn:active { transform: scale(0.90); }
     </style>
 </head>
 <body>
@@ -322,6 +338,8 @@
     let correctCount = 0;
     let userResults = [];
     let incorrectQuestions = [];
+    let currentDirection = null;  // 'ja2en' | 'en2ja' | null
+    let currentEnWord = '';       // 読み上げ対象の英単語
 
     function startQuiz(type, direction) {
         const rawData = datasets[type];
@@ -330,6 +348,7 @@
         incorrectQuestions = [];
         currentIndex = 0;
         correctCount = 0;
+        currentDirection = direction || null;
 
         rawData.forEach(item => {
             if (type === 'europe') {
@@ -375,10 +394,26 @@
     function showQuestion() {
         const q = currentQuestions[currentIndex];
         document.getElementById('progress').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
-        document.getElementById('word').innerText = q.display;
+
+        const wordEl = document.getElementById('word');
+        if (currentDirection === 'en2ja') {
+            // 英→日：英単語の横にスピーカーアイコンを表示
+            currentEnWord = q.display;
+            wordEl.innerHTML =
+                `<span>${q.display}</span><button class="speak-btn" onclick="speakCurrentWord()" title="英語を読み上げる">🔊</button>`;
+        } else {
+            wordEl.innerText = q.display;
+        }
         
         const meaningEl = document.getElementById('meaning');
-        meaningEl.innerText = q.answer;
+        if (currentDirection === 'ja2en') {
+            // 日→英：答えの英単語の横にスピーカーアイコンを表示
+            currentEnWord = q.answer;
+            meaningEl.innerHTML =
+                `<span>${q.answer}</span><button class="speak-btn" onclick="speakCurrentWord()" title="英語を読み上げる">🔊</button>`;
+        } else {
+            meaningEl.innerText = q.answer;
+        }
         meaningEl.classList.add('hidden');
 
         const mapArea = document.getElementById('map-area');
@@ -464,6 +499,24 @@
 
     function goMenu() {
         switchScreen('menu-screen');
+    }
+
+    // ── 英単語読み上げ ─────────────────────────────────────
+    function speakWord(word) {
+        if ('speechSynthesis' in window) {
+            const utterance = new SpeechSynthesisUtterance(word);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            utterance.pitch = 1.0;
+            window.speechSynthesis.cancel(); // 連続再生時の重なりを防ぐ
+            window.speechSynthesis.speak(utterance);
+        } else {
+            alert('お使いのブラウザは音声合成に対応していません。');
+        }
+    }
+
+    function speakCurrentWord() {
+        if (currentEnWord) speakWord(currentEnWord);
     }
 
     function openLightbox(src) {
