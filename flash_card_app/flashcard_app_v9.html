@@ -231,7 +231,8 @@
         <button class="menu-btn" onclick="startQuiz('months', 'en2ja')">中１英単語（月）　英→日</button>
         <button class="menu-btn" onclick="startQuiz('days',   'ja2en')">中１英単語（曜日）　日→英</button>
         <button class="menu-btn" onclick="startQuiz('days',   'en2ja')">中１英単語（曜日）　英→日</button>
-        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパの国・首都</button>
+        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
+        <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
     </div>
 
     <!-- 2. クイズ画面 -->
@@ -309,7 +310,7 @@
         ],
         europe: [
             { meaning: "ウィーン",       imgFile: "austria.png",   countryName: "オーストリア" },
-            { meaning: "ブリュッセル",   imgFile: "belgium.png",   countryName: "ベルギー" },
+            { meaning: "ブリュッセル",   imgFile: "Belgium.png",   countryName: "ベルギー" },
             { meaning: "プラハ",         imgFile: "czechia.png",   countryName: "チェコ" },
             { meaning: "コペンハーゲン", imgFile: "denmark.png",   countryName: "デンマーク" },
             { meaning: "ヘルシンキ",     imgFile: "finland.png",   countryName: "フィンランド" },
@@ -318,9 +319,9 @@
             { meaning: "アテネ",         imgFile: "greece.png",    countryName: "ギリシア" },
             { meaning: "ブダペスト",     imgFile: "hungary.png",   countryName: "ハンガリー" },
             { meaning: "レイキャビク",   imgFile: "iceland.png",   countryName: "アイスランド" },
-            { meaning: "ダブリン",       imgFile: "ireland.png",   countryName: "アイルランド" },
+            { meaning: "ダブリン",       imgFile: "Ireland.png",   countryName: "アイルランド" },
             { meaning: "ローマ",         imgFile: "italy.png",     countryName: "イタリア" },
-            { meaning: "アムステルダム", imgFile: "netherlands.png", countryName: "オランダ" },
+            { meaning: "アムステルダム", imgFile: "Netherlands.png", countryName: "オランダ" },
             { meaning: "オスロ",         imgFile: "norway.png",    countryName: "ノルウェー" },
             { meaning: "ワルシャワ",     imgFile: "poland.png",    countryName: "ポーランド" },
             { meaning: "リスボン",       imgFile: "portugal.png",  countryName: "ポルトガル" },
@@ -329,8 +330,23 @@
             { meaning: "ストックホルム", imgFile: "sweden.png",    countryName: "スウェーデン" },
             { meaning: "ベルン",         imgFile: "switzerland.png", countryName: "スイス" },
             { meaning: "ロンドン",       imgFile: "uk.png",        countryName: "イギリス" },
-            { meaning: "キーウ",         imgFile: "ukraine.png",   countryName: "ウクライナ" }
+            { meaning: "キーウ",         imgFile: "Ukraine.png",   countryName: "ウクライナ" }
+        ],
+        america: [
+            { meaning: "ワシントンD.C.", imgFile: "usa.png", countryName: "アメリカ合衆国" },
+            { meaning: "オタワ",         imgFile: "canada.png", countryName: "カナダ" },
+            { meaning: "メキシコシティ", imgFile: "mexico.png", countryName: "メキシコ" },
+            { meaning: "ハバナ",         imgFile: "cuba.png", countryName: "キューバ" },
+            { meaning: "キト", 	         imgFile: "ecuador.png", countryName: "エクアドル" },
+            { meaning: "リマ",           imgFile: "peru.png", countryName: "ペルー" },
+            { meaning: "サンティアゴ",   imgFile: "chile.png", countryName: "チリ" },
+            { meaning: "スクレ",         imgFile: "bolivia.png", countryName: "ボリビア" },
+            { meaning: "ブラジリア",     imgFile: "brazil.png", countryName: "ブラジル" },
+            { meaning: "ブエノスアイレス", imgFile: "argentina.png", countryName: "アルゼンチン" },
+            { meaning: "ボゴタ",         imgFile: "colombia.png", countryName: "コロンビア" },
+            { meaning: "カラカス",       imgFile: "venezuela.png", countryName: "ベネズエラ" }
         ]
+
     };
 
     let currentQuestions = [];
@@ -351,7 +367,7 @@
         currentDirection = direction || null;
 
         rawData.forEach(item => {
-            if (type === 'europe') {
+            if (type === 'europe' || type === 'america') {
                 currentQuestions.push({
                     display: "表示された画像の国名・首都はどこでしょうか？",
                     answer: `${item.countryName}・${item.meaning}`,
