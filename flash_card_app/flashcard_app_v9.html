@@ -218,6 +218,60 @@
         }
         .speak-btn:hover  { opacity: 1; background: rgba(59,130,246,0.1); }
         .speak-btn:active { transform: scale(0.90); }
+
+        /* ── 学習モード トグル ── */
+        .learn-toggle-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            background: #f1f5f9;
+            border-radius: 10px;
+            padding: 12px 18px;
+            margin: 16px 0 4px;
+        }
+        .learn-toggle-label {
+            font-size: 15px;
+            font-weight: 700;
+            color: #334155;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 52px;
+            height: 28px;
+            flex-shrink: 0;
+        }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            inset: 0;
+            background: #cbd5e1;
+            border-radius: 28px;
+            transition: .25s;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 22px; width: 22px;
+            left: 3px; bottom: 3px;
+            background: white;
+            border-radius: 50%;
+            transition: .25s;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        }
+        input:checked + .toggle-slider { background: #10b981; }
+        input:checked + .toggle-slider:before { transform: translateX(24px); }
+        .learn-mode-badge {
+            font-size: 13px;
+            font-weight: 600;
+            color: #64748b;
+            min-width: 24px;
+        }
+        input:checked ~ .learn-mode-badge { color: #10b981; }
+        /* 学習モード 次へボタン */
+        .next-btn { background-color: #6366f1; color: white; width: 85%; }
     </style>
 </head>
 <body>
@@ -226,7 +280,18 @@
     <!-- 1. メニュー画面 -->
     <div id="menu-screen" class="screen active">
         <h1>暗記アプリ</h1>
-        <p style="color: #64748b;">問題を選択してください</p>
+        <!-- 学習モード トグル -->
+        <div class="learn-toggle-row">
+            <span class="learn-toggle-label">📖 学習モード</span>
+            <label class="toggle-switch">
+                <input type="checkbox" id="learningModeToggle" onchange="toggleLearningMode(this.checked)">
+                <span class="toggle-slider"></span>
+            </label>
+            <span id="learn-mode-badge" class="learn-mode-badge">オフ</span>
+        </div>
+        <p style="color: #64748b; font-size: 13px; margin-bottom:4px;">
+            問題を選択してください
+        </p>
         <button class="menu-btn" onclick="startQuiz('months', 'ja2en')">中１英単語（月）　日→英</button>
         <button class="menu-btn" onclick="startQuiz('months', 'en2ja')">中１英単語（月）　英→日</button>
         <button class="menu-btn" onclick="startQuiz('days',   'ja2en')">中１英単語（曜日）　日→英</button>
@@ -260,6 +325,11 @@
         <div id="action-after" style="display: none;">
             <button class="btn success-btn" onclick="submitResult(true)">正解 〇</button>
             <button class="btn danger-btn" onclick="submitResult(false)">不正解 ×</button>
+        </div>
+
+        <!-- 学習モード：次へボタン -->
+        <div id="action-learning" style="display: none;">
+            <button class="btn next-btn" onclick="nextInLearning()">次へ →</button>
         </div>
     </div>
 
@@ -356,6 +426,7 @@
     let incorrectQuestions = [];
     let currentDirection = null;  // 'ja2en' | 'en2ja' | null
     let currentEnWord = '';       // 読み上げ対象の英単語
+    let isLearningMode = false;   // 学習モード ON/OFF
 
     function startQuiz(type, direction) {
         const rawData = datasets[type];
@@ -443,8 +514,16 @@
             imgEl.src = "";
         }
 
-        document.getElementById('action-before').style.display = 'block';
-        document.getElementById('action-after').style.display = 'none';
+        document.getElementById('action-before').style.display    = isLearningMode ? 'none'  : 'block';
+        document.getElementById('action-after').style.display     = 'none';
+        document.getElementById('action-learning').style.display  = isLearningMode ? 'block' : 'none';
+
+        // 学習モードは答えを最初から表示、通常モードは隠す
+        if (isLearningMode) {
+            meaningEl.classList.remove('hidden');
+        } else {
+            meaningEl.classList.add('hidden');
+        }
     }
 
     function showAnswer() {
@@ -478,43 +557,67 @@
 
     function showResult() {
         switchScreen('result-screen');
-        document.getElementById('score-text').innerText = `${currentQuestions.length}問中 ${correctCount}問正解！`;
-        
         const retryBtn = document.getElementById('retry-incorrect-btn');
-        if (incorrectQuestions.length > 0) {
-            retryBtn.style.display = 'block';
-            retryBtn.innerText = `間違えた ${incorrectQuestions.length} 問を再テスト`;
-        } else {
-            retryBtn.style.display = 'none';
-        }
+        const listEl   = document.getElementById('result-list');
 
-        const listEl = document.getElementById('result-list');
-        listEl.innerHTML = '';
-        
-        userResults.forEach(item => {
-            const itemEl = document.createElement('div');
-            itemEl.className = 'result-item';
-            
-            const textSpan = document.createElement('span');
-            textSpan.innerHTML = `<span class="q-text">${item.display}</span> ➔ <span class="a-text">${item.answer}</span>`;
-            
-            const badgeSpan = document.createElement('span');
-            if (item.isCorrect) {
-                badgeSpan.className = 'badge badge-correct';
-                badgeSpan.innerText = '正解';
+        if (isLearningMode) {
+            // 学習モード完了画面
+            document.getElementById('score-text').innerText =
+                `全 ${currentQuestions.length} 問の学習が完了しました！ 🎉`;
+            listEl.innerHTML =
+                '<p style="text-align:center;color:#64748b;padding:20px 0;">学習モードでは正誤記録はありません</p>';
+            retryBtn.style.display = 'none';
+        } else {
+            // 通常モード結果
+            document.getElementById('score-text').innerText =
+                `${currentQuestions.length}問中 ${correctCount}問正解！`;
+            if (incorrectQuestions.length > 0) {
+                retryBtn.style.display = 'block';
+                retryBtn.innerText = `間違えた ${incorrectQuestions.length} 問を再テスト`;
             } else {
-                badgeSpan.className = 'badge badge-incorrect';
-                badgeSpan.innerText = '不正解';
+                retryBtn.style.display = 'none';
             }
-            
-            itemEl.appendChild(textSpan);
-            itemEl.appendChild(badgeSpan);
-            listEl.appendChild(itemEl);
-        });
+            listEl.innerHTML = '';
+            userResults.forEach(item => {
+                const itemEl = document.createElement('div');
+                itemEl.className = 'result-item';
+                const textSpan = document.createElement('span');
+                textSpan.innerHTML =
+                    `<span class="q-text">${item.display}</span> ➔ <span class="a-text">${item.answer}</span>`;
+                const badgeSpan = document.createElement('span');
+                if (item.isCorrect) {
+                    badgeSpan.className = 'badge badge-correct';
+                    badgeSpan.innerText = '正解';
+                } else {
+                    badgeSpan.className = 'badge badge-incorrect';
+                    badgeSpan.innerText = '不正解';
+                }
+                itemEl.appendChild(textSpan);
+                itemEl.appendChild(badgeSpan);
+                listEl.appendChild(itemEl);
+            });
+        }
     }
 
     function goMenu() {
         switchScreen('menu-screen');
+    }
+
+    // ── 学習モード：次の問題へ ────────────────────────────
+    function nextInLearning() {
+        currentIndex++;
+        if (currentIndex < currentQuestions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    // ── 学習モード トグル ────────────────────────────────
+    function toggleLearningMode(checked) {
+        isLearningMode = checked;
+        document.getElementById('learn-mode-badge').textContent = checked ? 'オン' : 'オフ';
+        document.getElementById('learn-mode-badge').style.color = checked ? '#10b981' : '#64748b';
     }
 
     // ── 英単語読み上げ ─────────────────────────────────────
