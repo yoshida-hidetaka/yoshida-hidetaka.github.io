@@ -292,6 +292,10 @@
         <p style="color: #64748b; font-size: 13px; margin-bottom:4px;">
             問題を選択してください
         </p>
+        <!-- 今日の学習時間 -->
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:8px 0 4px;font-size:15px;color:#1e40af;font-weight:600;">
+            📚 今日の学習時間：<span id="today-study-time">0分</span>
+        </div>
         <button class="menu-btn" onclick="startQuiz('months', 'ja2en')">中１英単語（月）　日→英</button>
         <button class="menu-btn" onclick="startQuiz('months', 'en2ja')">中１英単語（月）　英→日</button>
         <button class="menu-btn" onclick="startQuiz('days',   'ja2en')">中１英単語（曜日）　日→英</button>
@@ -337,6 +341,7 @@
     <div id="result-screen" class="screen">
         <h1>結果発表</h1>
         <div id="score-text" class="score">0問中 0問正解！</div>
+        <div id="elapsed-time" style="font-size:15px;color:#64748b;margin:-8px 0 12px;">⏱️ 所要時間：--</div>
         
         <div class="result-list-container">
             <div id="result-list"></div>
@@ -427,6 +432,7 @@
     let currentDirection = null;  // 'ja2en' | 'en2ja' | null
     let currentEnWord = '';       // 読み上げ対象の英単語
     let isLearningMode = false;   // 学習モード ON/OFF
+    let quizStartTime  = null;    // 計測開始時刻
 
     function startQuiz(type, direction) {
         const rawData = datasets[type];
@@ -436,6 +442,7 @@
         currentIndex = 0;
         correctCount = 0;
         currentDirection = direction || null;
+        quizStartTime = Date.now();
 
         rawData.forEach(item => {
             if (type === 'europe' || type === 'america') {
@@ -473,6 +480,7 @@
         incorrectQuestions = [];
         currentIndex = 0;
         correctCount = 0;
+        quizStartTime = Date.now();
 
         switchScreen('quiz-screen');
         showQuestion();
@@ -557,6 +565,17 @@
 
     function showResult() {
         switchScreen('result-screen');
+
+        // ── 所要時間の計算・表示 ─────────────────────────
+        const elapsed  = quizStartTime ? Date.now() - quizStartTime : 0;
+        const totalSec = Math.floor(elapsed / 1000);
+        const min = Math.floor(totalSec / 60);
+        const sec = totalSec % 60;
+        const timeStr = min > 0 ? `${min}分${sec}秒` : `${sec}秒`;
+        document.getElementById('elapsed-time').textContent = `⏱️ 所要時間：${timeStr}`;
+
+        // ── 今日の学習累計に加算 ─────────────────────────
+        addStudyTime(totalSec);
         const retryBtn = document.getElementById('retry-incorrect-btn');
         const listEl   = document.getElementById('result-list');
 
@@ -601,6 +620,36 @@
 
     function goMenu() {
         switchScreen('menu-screen');
+        updateMenuStudyTime(); // メニューの累計時間を再描画
+    }
+
+    // ── 今日の学習時間（localStorage） ──────────────────
+    function getTodayKey() {
+        const d = new Date();
+        return `studyTime_${d.getFullYear()}_${d.getMonth() + 1}_${d.getDate()}`;
+    }
+
+    function getTodaySeconds() {
+        const val = localStorage.getItem(getTodayKey());
+        return val ? parseInt(val, 10) : 0;
+    }
+
+    function addStudyTime(seconds) {
+        const current = getTodaySeconds();
+        localStorage.setItem(getTodayKey(), current + seconds);
+    }
+
+    function formatStudyTime(totalSec) {
+        const totalMin = Math.floor(totalSec / 60); // 1分未満切り捨て
+        const hours = Math.floor(totalMin / 60);
+        const min   = totalMin % 60;
+        if (hours > 0) return `${hours}時間${min}分`;
+        return `${min}分`;
+    }
+
+    function updateMenuStudyTime() {
+        const el = document.getElementById('today-study-time');
+        if (el) el.textContent = formatStudyTime(getTodaySeconds());
     }
 
     // ── 学習モード：次の問題へ ────────────────────────────
@@ -656,6 +705,9 @@
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(screenId).classList.add('active');
     }
+
+    // 起動時にメニューの学習時間を表示
+    updateMenuStudyTime();
 </script>
 
 </body>
