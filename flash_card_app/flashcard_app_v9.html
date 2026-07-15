@@ -50,11 +50,108 @@
             border-radius: 10px;
             cursor: pointer;
             transition: all 0.2s;
+            box-sizing: border-box;
         }
         .menu-btn:hover {
             background-color: #2563eb;
             transform: translateY(-1px);
         }
+
+        /* ── アコーディオン（details/summary）のスタイル ── */
+        details.category-accordion {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            text-align: left;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s ease;
+        }
+        details.category-accordion[open] {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        }
+        details.category-accordion summary {
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #1e293b;
+            cursor: pointer;
+            background-color: #f8fafc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            list-style: none; /* デフォルトの三角を消す */
+            user-select: none;
+            border-bottom: 1px solid transparent;
+        }
+        details.category-accordion[open] summary {
+            border-bottom: 1px solid #e2e8f0;
+            background-color: #f1f5f9;
+        }
+        /* Safari用の三角消し */
+        details.category-accordion summary::-webkit-details-marker {
+            display: none;
+        }
+        /* 右側に独自の矢印を配置 */
+        details.category-accordion summary::after {
+            content: '▶';
+            font-size: 11px;
+            color: #64748b;
+            transition: transform 0.2s ease;
+            margin-left: 10px;
+        }
+        /* 開いた時に矢印を下向きにする */
+        details.category-accordion[open] summary::after {
+            transform: rotate(90deg);
+            color: #3b82f6;
+        }
+        /* アコーディオン内部のコンテンツ領域 */
+        .accordion-content {
+            padding: 12px 14px;
+            background-color: #ffffff;
+        }
+
+        /* ── 1行に並べるスタイル ── */
+        .quiz-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f1f5f9;
+            padding: 10px 14px;
+            margin: 8px 0;
+            border-radius: 10px;
+            gap: 10px;
+        }
+        .quiz-row-label {
+            flex: 1;
+            text-align: left;
+            font-weight: 600;
+            font-size: 14px;
+            color: #334155;
+            word-break: break-all;
+        }
+        .quiz-row-buttons {
+            display: flex;
+            gap: 8px;
+        }
+        .quiz-sub-btn {
+            padding: 10px 16px;
+            font-size: 14px;
+            font-weight: 700;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .quiz-sub-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-1px);
+        }
+
         .progress {
             font-size: 14px;
             color: #64748b;
@@ -70,6 +167,7 @@
             overflow: hidden;
             box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
             min-height: 250px;
+            position: relative;
         }
         .map-img {
             max-width: 100%;
@@ -112,9 +210,6 @@
             line-height: 1;
             font-weight: 300;
             user-select: none;
-        }
-        .map-container {
-            position: relative;
         }
         .zoom-hint {
             position: absolute;
@@ -228,7 +323,7 @@
             background: #f1f5f9;
             border-radius: 10px;
             padding: 12px 18px;
-            margin: 16px 0 4px;
+            margin: 16px 0 12px;
         }
         .learn-toggle-label {
             font-size: 15px;
@@ -277,10 +372,8 @@
 <body>
 
 <div class="container">
-    <!-- 1. メニュー画面 -->
     <div id="menu-screen" class="screen active">
         <h1>暗記アプリ</h1>
-        <!-- 学習モード トグル -->
         <div class="learn-toggle-row">
             <span class="learn-toggle-label">📖 学習モード</span>
             <label class="toggle-switch">
@@ -289,133 +382,213 @@
             </label>
             <span id="learn-mode-badge" class="learn-mode-badge">オフ</span>
         </div>
-        <p style="color: #64748b; font-size: 13px; margin-bottom:4px;">
-            問題を選択してください
+        <p style="color: #64748b; font-size: 13px; margin-bottom:12px;">
+            カテゴリーをタップして問題を選択してください
         </p>
-        <!-- 今日の学習時間 -->
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:8px 0 4px;font-size:15px;color:#1e40af;font-weight:600;">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:8px 0 16px;font-size:15px;color:#1e40af;font-weight:600;">
             📚 今日の学習時間：<span id="today-study-time">0分</span>
         </div>
 
-<div class="quiz-step-section">
-    <h3>中１英単語　レベル１:身のまわりの言葉</h3>
-    
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('months', 'ja2en')">中１英単語（月）　日→英</button>
-        <button class="menu-btn" onclick="startQuiz('months', 'en2ja')">中１英単語（月）　英→日</button>
-        <button class="menu-btn" onclick="startQuiz('days',   'ja2en')">中１英単語（曜日）　日→英</button>
-        <button class="menu-btn" onclick="startQuiz('days',   'en2ja')">中１英単語（曜日）　英→日</button>
+        <details class="category-accordion">
+            <summary>中１英単語 レベル１:身のまわりの言葉</summary>
+            <div class="accordion-content">
+                <div class="quiz-row">
+                    <span class="quiz-row-label">月</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('months', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('months', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">曜日</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('days', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('days', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">身の回り品</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('goods', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('goods', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">人々・職業</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('people', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('people', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">食べ物・飲み物</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('foods', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('foods', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">自然・動物</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('nature', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('nature', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">時・カレンダー</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('time', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('time', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">スポーツ・趣味・教科</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('interests', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('interests', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">挨拶・感情</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('feelings', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('feelings', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="category-accordion">
+            <summary>中１英単語 レベル２：自分や相手のこと</summary>
+            <div class="accordion-content">
+                <div class="quiz-row">
+                    <span class="quiz-row-label">代名詞・主格・所有格</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('pronouns', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('pronouns', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">be動詞</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('verbs', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('verbs', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">基本的な一般動詞</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('actions', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('actions', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="category-accordion">
+            <summary>中１英単語 レベル３：様子や場所</summary>
+            <div class="accordion-content">
+                <div class="quiz-row">
+                    <span class="quiz-row-label">形容詞・様子・性質</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('descriptions', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('descriptions', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">副詞・程度・方法</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('details', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('details', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">前置詞・位置・時間</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('positions', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('positions', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">接続詞</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('links', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('links', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">助動詞・can</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('helpers', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('helpers', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="category-accordion">
+            <summary>中１英単語 レベル４：質問や過去の話</summary>
+            <div class="accordion-content">
+                <div class="quiz-row">
+                    <span class="quiz-row-label">疑問詞</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('questions', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('questions', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">代名詞の目的格</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('objects', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('objects', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">三人称単数現在形</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('singulars', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('singulars', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+
+                <div class="quiz-row">
+                    <span class="quiz-row-label">過去形・be動詞/一般動詞</span>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('past', 'ja2en')">日→英</button>
+                        <button class="quiz-sub-btn" onclick="startQuiz('past', 'en2ja')">英→日</button>
+                    </div>
+                </div>
+            </div>
+        </details>
+
+        <details class="category-accordion">
+            <summary>中１地理 世界の国</summary>
+            <div class="accordion-content" style="padding: 4px 14px 14px;">
+                <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
+                <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
+            </div>
+        </details>
     </div>
 
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('goods', 'ja2en')">中１英単語（身の回り品） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('goods', 'en2ja')">中１英単語（身の回り品） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('people', 'ja2en')">中１英単語（人々・職業） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('people', 'en2ja')">中１英単語（人々・職業） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('foods', 'ja2en')">中１英単語（食べ物・飲み物） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('foods', 'en2ja')">中１英単語（食べ物・飲み物） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('nature', 'ja2en')">中１英単語（自然・動物） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('nature', 'en2ja')">中１英単語（自然・動物） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('time', 'ja2en')">中１英単語（時・カレンダー） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('time', 'en2ja')">中１英単語（時・カレンダー） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('interests', 'ja2en')">中１英単語（スポーツ・趣味・教科） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('interests', 'en2ja')">中１英単語（スポーツ・趣味・教科） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('feelings', 'ja2en')">中１英単語（挨拶・感情） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('feelings', 'en2ja')">中１英単語（挨拶・感情） 英→日</button>
-    </div>
-</div>
-
-    <h3>中１英単語　レベル２：自分や相手のこと</h3>
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('pronouns', 'ja2en')">中１英単語（代名詞・主格・所有格） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('pronouns', 'en2ja')">中１英単語（代名詞・主格・所有格） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('verbs', 'ja2en')">中１英単語（be動詞） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('verbs', 'en2ja')">中１英単語（be動詞） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('actions', 'ja2en')">中１英単語（基本的な一般動詞） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('actions', 'en2ja')">中１英単語（基本的な一般動詞） 英→日</button>
-    </div>
-
-    <h3>中１英単語　レベル３：様子や場所</h3>
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('descriptions', 'ja2en')">中１英単語（形容詞・様子・性質） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('descriptions', 'en2ja')">中１英単語（形容詞・様子・性質） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('details', 'ja2en')">中１英単語（副詞・程度・方法） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('details', 'en2ja')">中１英単語（副詞・程度・方法） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('positions', 'ja2en')">中１英単語（前置詞・位置・時間） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('positions', 'en2ja')">中１英単語（前置詞・位置・時間） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('links', 'ja2en')">中１英単語（接続詞） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('links', 'en2ja')">中１英単語（接続詞） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('helpers', 'ja2en')">中１英単語（助動詞・can） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('helpers', 'en2ja')">中１英単語（助動詞・can） 英→日</button>
-    </div>
-
-    <h3>中１英単語　レベル４：質問や過去の話</h3>
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('questions', 'ja2en')">中１英単語（疑問詞） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('questions', 'en2ja')">中１英単語（疑問詞） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('objects', 'ja2en')">中１英単語（代名詞の目的格） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('objects', 'en2ja')">中１英単語（代名詞の目的格） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('singulars', 'ja2en')">中１英単語（三人称単数現在形） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('singulars', 'en2ja')">中１英単語（三人称単数現在形） 英→日</button>
-    </div>
-
-    <div class="quiz-category-group">
-        <button class="menu-btn" onclick="startQuiz('past', 'ja2en')">中１英単語（過去形・be動詞/一般動詞） 日→英</button>
-        <button class="menu-btn" onclick="startQuiz('past', 'en2ja')">中１英単語（過去形・be動詞/一般動詞） 英→日</button>
-    </div>
-
-    <h3>中１地理　世界の国</h3>
-        <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
-        <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
-    </div>
-
-    <!-- 2. クイズ画面 -->
     <div id="quiz-screen" class="screen">
         <div id="progress" class="progress">1 / 5</div>
         
-        <!-- 各国の地図画像を読み込むコンテナ -->
         <div id="map-area" class="map-container" style="display: none;">
             <img id="country-img" class="map-img" src="" alt="白地図問題" onclick="openLightbox(this.src)">
             <div class="zoom-hint">🔍 タップで拡大</div>
@@ -427,24 +600,20 @@
             <div id="meaning" class="meaning-display hidden">-</div>
         </div>
 
-        <!-- 初期状態：OKボタン -->
         <div id="action-before">
             <button class="btn primary-btn" onclick="showAnswer()">OK</button>
         </div>
 
-        <!-- OKを押した後：正解・不正解ボタン -->
         <div id="action-after" style="display: none;">
             <button class="btn success-btn" onclick="submitResult(true)">正解 〇</button>
             <button class="btn danger-btn" onclick="submitResult(false)">不正解 ×</button>
         </div>
 
-        <!-- 学習モード：次へボタン -->
         <div id="action-learning" style="display: none;">
             <button class="btn next-btn" onclick="nextInLearning()">次へ →</button>
         </div>
     </div>
 
-    <!-- 3. 結果画面 -->
     <div id="result-screen" class="screen">
         <h1>結果発表</h1>
         <div id="score-text" class="score">0問中 0問正解！</div>
@@ -459,7 +628,6 @@
     </div>
 </div>
 
-<!-- ── 拡大ライトボックス ── -->
 <div id="lightbox" onclick="closeLightbox()">
     <span id="lightbox-close" onclick="closeLightbox()">✕</span>
     <img id="lightbox-img" src="" alt="拡大画像">
@@ -672,7 +840,7 @@
             { word: "sorry", meaning: "申し訳なく思って" }
         ],
 
-// ステップ2：基本文法期
+        // ステップ2：基本文法期
         pronouns: [
             { word: "I", meaning: "私は" },
             { word: "my", meaning: "私の" },
@@ -744,7 +912,7 @@
             { word: "love", meaning: "愛する・大好きである" }
         ],
 
-    // ステップ3：表現の拡大期
+        // ステップ3：表現の拡大期
         descriptions: [
             { word: "big", meaning: "大きい" },
             { word: "small", meaning: "小さい" },
@@ -833,7 +1001,7 @@
             { word: "can", meaning: "〜できる・〜してもよい" }
         ],
 
-    // ステップ4：応用・展開期
+        // ステップ4：応用・展開期
         questions: [
             { word: "what", meaning: "何" },
             { word: "who", meaning: "誰" },
@@ -923,7 +1091,7 @@
             { meaning: "オタワ",         imgFile: "./america/canada.png", countryName: "カナダ" },
             { meaning: "メキシコシティ", imgFile: "./america/mexico.png", countryName: "メキシコ" },
             { meaning: "ハバナ",         imgFile: "./america/cuba.png", countryName: "キューバ" },
-            { meaning: "キト", 	         imgFile: "./america/ecuador.png", countryName: "エクアドル" },
+            { meaning: "キト",            imgFile: "./america/ecuador.png", countryName: "エクアドル" },
             { meaning: "リマ",           imgFile: "./america/peru.png", countryName: "ペルー" },
             { meaning: "サンティアゴ",   imgFile: "./america/chile.png", countryName: "チリ" },
             { meaning: "スクレ",         imgFile: "./america/bolivia.png", countryName: "ボリビア" },
@@ -932,7 +1100,6 @@
             { meaning: "ボゴタ",         imgFile: "./america/colombia.png", countryName: "コロンビア" },
             { meaning: "カラカス",       imgFile: "./america/venezuela.png", countryName: "ベネズエラ" }
         ]
-
     };
 
     let currentQuestions = [];
@@ -1003,7 +1170,6 @@
 
         const wordEl = document.getElementById('word');
         if (currentDirection === 'en2ja') {
-            // 英→日：英単語の横にスピーカーアイコンを表示
             currentEnWord = q.display;
             wordEl.innerHTML =
                 `<span>${q.display}</span><button class="speak-btn" onclick="speakCurrentWord()" title="英語を読み上げる">🔊</button>`;
@@ -1013,7 +1179,6 @@
         
         const meaningEl = document.getElementById('meaning');
         if (currentDirection === 'ja2en') {
-            // 日→英：答えの英単語の横にスピーカーアイコンを表示
             currentEnWord = q.answer;
             meaningEl.innerHTML =
                 `<span>${q.answer}</span><button class="speak-btn" onclick="speakCurrentWord()" title="英語を読み上げる">🔊</button>`;
@@ -1037,7 +1202,6 @@
         document.getElementById('action-after').style.display     = 'none';
         document.getElementById('action-learning').style.display  = isLearningMode ? 'block' : 'none';
 
-        // 学習モードは答えを最初から表示、通常モードは隠す
         if (isLearningMode) {
             meaningEl.classList.remove('hidden');
         } else {
@@ -1077,7 +1241,6 @@
     function showResult() {
         switchScreen('result-screen');
 
-        // ── 所要時間の計算・表示 ─────────────────────────
         const elapsed  = quizStartTime ? Date.now() - quizStartTime : 0;
         const totalSec = Math.floor(elapsed / 1000);
         const min = Math.floor(totalSec / 60);
@@ -1085,20 +1248,17 @@
         const timeStr = min > 0 ? `${min}分${sec}秒` : `${sec}秒`;
         document.getElementById('elapsed-time').textContent = `⏱️ 所要時間：${timeStr}`;
 
-        // ── 今日の学習累計に加算 ─────────────────────────
         addStudyTime(totalSec);
         const retryBtn = document.getElementById('retry-incorrect-btn');
         const listEl   = document.getElementById('result-list');
 
         if (isLearningMode) {
-            // 学習モード完了画面
             document.getElementById('score-text').innerText =
                 `全 ${currentQuestions.length} 問の学習が完了しました！ 🎉`;
             listEl.innerHTML =
                 '<p style="text-align:center;color:#64748b;padding:20px 0;">学習モードでは正誤記録はありません</p>';
             retryBtn.style.display = 'none';
         } else {
-            // 通常モード結果
             document.getElementById('score-text').innerText =
                 `${currentQuestions.length}問中 ${correctCount}問正解！`;
             if (incorrectQuestions.length > 0) {
@@ -1131,10 +1291,9 @@
 
     function goMenu() {
         switchScreen('menu-screen');
-        updateMenuStudyTime(); // メニューの累計時間を再描画
+        updateMenuStudyTime();
     }
 
-    // ── 今日の学習時間（localStorage） ──────────────────
     function getTodayKey() {
         const d = new Date();
         return `studyTime_${d.getFullYear()}_${d.getMonth() + 1}_${d.getDate()}`;
@@ -1151,7 +1310,7 @@
     }
 
     function formatStudyTime(totalSec) {
-        const totalMin = Math.floor(totalSec / 60); // 1分未満切り捨て
+        const totalMin = Math.floor(totalSec / 60);
         const hours = Math.floor(totalMin / 60);
         const min   = totalMin % 60;
         if (hours > 0) return `${hours}時間${min}分`;
@@ -1163,7 +1322,6 @@
         if (el) el.textContent = formatStudyTime(getTodaySeconds());
     }
 
-    // ── 学習モード：次の問題へ ────────────────────────────
     function nextInLearning() {
         currentIndex++;
         if (currentIndex < currentQuestions.length) {
@@ -1173,21 +1331,19 @@
         }
     }
 
-    // ── 学習モード トグル ────────────────────────────────
     function toggleLearningMode(checked) {
         isLearningMode = checked;
         document.getElementById('learn-mode-badge').textContent = checked ? 'オン' : 'オフ';
         document.getElementById('learn-mode-badge').style.color = checked ? '#10b981' : '#64748b';
     }
 
-    // ── 英単語読み上げ ─────────────────────────────────────
     function speakWord(word) {
         if ('speechSynthesis' in window) {
             const utterance = new SpeechSynthesisUtterance(word);
             utterance.lang = 'en-US';
             utterance.rate = 0.9;
             utterance.pitch = 1.0;
-            window.speechSynthesis.cancel(); // 連続再生時の重なりを防ぐ
+            window.speechSynthesis.cancel();
             window.speechSynthesis.speak(utterance);
         } else {
             alert('お使いのブラウザは音声合成に対応していません。');
@@ -1207,7 +1363,6 @@
         document.getElementById('lightbox').classList.remove('open');
     }
 
-    // キーボードのEscキーでも閉じられるように
     document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape') closeLightbox();
     });
@@ -1217,7 +1372,6 @@
         document.getElementById(screenId).classList.add('active');
     }
 
-    // 起動時にメニューの学習時間を表示
     updateMenuStudyTime();
 </script>
 
