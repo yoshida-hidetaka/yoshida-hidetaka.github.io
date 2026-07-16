@@ -131,6 +131,19 @@
             color: #334155;
             word-break: break-all;
         }
+        .count-badge {
+            font-size: 11px;
+            font-weight: 700;
+            color: #64748b;
+            background: #e2e8f0;
+            border-radius: 99px;
+            padding: 2px 8px;
+            white-space: nowrap;
+            min-width: 34px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+        .count-badge:empty { display: none; }
         .quiz-row-buttons {
             display: flex;
             gap: 8px;
@@ -385,8 +398,11 @@
         <p style="color: #64748b; font-size: 13px; margin-bottom:12px;">
             カテゴリーをタップして問題を選択してください
         </p>
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:8px 0 16px;font-size:15px;color:#1e40af;font-weight:600;">
+        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:8px 0 4px;font-size:15px;color:#1e40af;font-weight:600;">
             📚 今日の学習時間：<span id="today-study-time">0分</span>
+        </div>
+        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 16px;margin:0 0 16px;font-size:15px;color:#166534;font-weight:600;">
+            📖 総学習時間：<span id="total-study-time">0分</span>
         </div>
 
         <details class="category-accordion">
@@ -394,6 +410,7 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">月</span>
+                    <span class="count-badge" id="count-months"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('months', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('months', 'en2ja')">英→日</button>
@@ -402,6 +419,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">曜日</span>
+                    <span class="count-badge" id="count-days"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('days', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('days', 'en2ja')">英→日</button>
@@ -410,6 +428,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">身の回り品</span>
+                    <span class="count-badge" id="count-goods"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('goods', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('goods', 'en2ja')">英→日</button>
@@ -418,6 +437,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">人々・職業</span>
+                    <span class="count-badge" id="count-people"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('people', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('people', 'en2ja')">英→日</button>
@@ -426,6 +446,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">食べ物・飲み物</span>
+                    <span class="count-badge" id="count-foods"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('foods', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('foods', 'en2ja')">英→日</button>
@@ -434,6 +455,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">自然・動物</span>
+                    <span class="count-badge" id="count-nature"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('nature', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('nature', 'en2ja')">英→日</button>
@@ -442,6 +464,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">時・カレンダー</span>
+                    <span class="count-badge" id="count-time"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('time', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('time', 'en2ja')">英→日</button>
@@ -450,6 +473,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">スポーツ・趣味・教科</span>
+                    <span class="count-badge" id="count-interests"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('interests', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('interests', 'en2ja')">英→日</button>
@@ -458,6 +482,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">挨拶・感情</span>
+                    <span class="count-badge" id="count-feelings"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('feelings', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('feelings', 'en2ja')">英→日</button>
@@ -471,6 +496,7 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">代名詞・主格・所有格</span>
+                    <span class="count-badge" id="count-pronouns"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('pronouns', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('pronouns', 'en2ja')">英→日</button>
@@ -479,6 +505,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">be動詞</span>
+                    <span class="count-badge" id="count-verbs"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('verbs', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('verbs', 'en2ja')">英→日</button>
@@ -487,6 +514,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">基本的な一般動詞</span>
+                    <span class="count-badge" id="count-actions"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('actions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('actions', 'en2ja')">英→日</button>
@@ -500,6 +528,7 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">形容詞・様子・性質</span>
+                    <span class="count-badge" id="count-descriptions"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('descriptions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('descriptions', 'en2ja')">英→日</button>
@@ -508,6 +537,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">副詞・程度・方法</span>
+                    <span class="count-badge" id="count-details"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('details', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('details', 'en2ja')">英→日</button>
@@ -516,6 +546,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">前置詞・位置・時間</span>
+                    <span class="count-badge" id="count-positions"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('positions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('positions', 'en2ja')">英→日</button>
@@ -524,6 +555,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">接続詞</span>
+                    <span class="count-badge" id="count-links"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('links', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('links', 'en2ja')">英→日</button>
@@ -532,6 +564,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">助動詞・can</span>
+                    <span class="count-badge" id="count-helpers"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('helpers', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('helpers', 'en2ja')">英→日</button>
@@ -545,6 +578,7 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">疑問詞</span>
+                    <span class="count-badge" id="count-questions"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('questions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('questions', 'en2ja')">英→日</button>
@@ -553,6 +587,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">代名詞の目的格</span>
+                    <span class="count-badge" id="count-objects"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('objects', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('objects', 'en2ja')">英→日</button>
@@ -561,6 +596,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">三人称単数現在形</span>
+                    <span class="count-badge" id="count-singulars"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('singulars', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('singulars', 'en2ja')">英→日</button>
@@ -569,6 +605,7 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">過去形・be動詞/一般動詞</span>
+                    <span class="count-badge" id="count-past"></span>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('past', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('past', 'en2ja')">英→日</button>
@@ -580,10 +617,10 @@
         <details class="category-accordion">
             <summary>中１地理 世界の国</summary>
             <div class="accordion-content" style="padding: 4px 14px 14px;">
-                <button class="menu-btn" onclick="startQuiz('asiaOceania')">アジア・オセアニア州の国・首都</button>
-                <button class="menu-btn" onclick="startQuiz('africa')">アフリカ州の国・首都</button>
-                <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
-                <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
+                <div class="quiz-row"><span class="quiz-row-label">アジア・オセアニア州の国・首都</span><span class="count-badge" id="count-asiaOceania"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('asiaOceania')">開始</button></div></div>
+                <div class="quiz-row"><span class="quiz-row-label">アフリカ州の国・首都</span><span class="count-badge" id="count-africa"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('africa')">開始</button></div></div>
+                <div class="quiz-row"><span class="quiz-row-label">南北アメリカ州の国・首都</span><span class="count-badge" id="count-america"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('america')">開始</button></div></div>
+                <div class="quiz-row"><span class="quiz-row-label">ヨーロッパ州の国・首都</span><span class="count-badge" id="count-europe"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('europe')">開始</button></div></div>
             </div>
         </details>
     </div>
@@ -1165,6 +1202,10 @@
         currentDirection = direction || null;
         quizStartTime = Date.now();
 
+        // 学習回数を記録
+        const cnt = parseInt(localStorage.getItem(`studyCount_${type}`) || '0', 10);
+        localStorage.setItem(`studyCount_${type}`, cnt + 1);
+
         rawData.forEach(item => {
             if (type === 'europe' || type === 'america' || type === 'africa' || type === 'asiaOceania') {
                 currentQuestions.push({
@@ -1348,8 +1389,12 @@
     }
 
     function addStudyTime(seconds) {
+        // 今日の学習時間
         const current = getTodaySeconds();
         localStorage.setItem(getTodayKey(), current + seconds);
+        // 総学習時間
+        const total = parseInt(localStorage.getItem('studyTime_total') || '0', 10);
+        localStorage.setItem('studyTime_total', total + seconds);
     }
 
     function formatStudyTime(totalSec) {
@@ -1361,8 +1406,32 @@
     }
 
     function updateMenuStudyTime() {
-        const el = document.getElementById('today-study-time');
-        if (el) el.textContent = formatStudyTime(getTodaySeconds());
+        const todayEl = document.getElementById('today-study-time');
+        if (todayEl) todayEl.textContent = formatStudyTime(getTodaySeconds());
+        const totalEl = document.getElementById('total-study-time');
+        if (totalEl) {
+            const total = parseInt(localStorage.getItem('studyTime_total') || '0', 10);
+            totalEl.textContent = formatStudyTime(total);
+        }
+        updateStudyCounts();
+    }
+
+    // ── 学習回数の表示 ──────────────────────────────────
+    const CATEGORY_TYPES = [
+        'months','days','goods','people','foods','nature','time','interests','feelings',
+        'pronouns','verbs','actions',
+        'descriptions','details','positions','links','helpers',
+        'questions','objects','singulars','past',
+        'asiaOceania','africa','america','europe'
+    ];
+
+    function updateStudyCounts() {
+        CATEGORY_TYPES.forEach(type => {
+            const el = document.getElementById(`count-${type}`);
+            if (!el) return;
+            const cnt = parseInt(localStorage.getItem(`studyCount_${type}`) || '0', 10);
+            el.textContent = cnt > 0 ? `${cnt}回` : '';
+        });
     }
 
     function nextInLearning() {
