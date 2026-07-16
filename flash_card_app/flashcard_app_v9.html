@@ -582,6 +582,7 @@
             <div class="accordion-content" style="padding: 4px 14px 14px;">
                 <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
                 <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
+                <button class="menu-btn" onclick="startQuiz('africa')">アフリカ州の国・首都</button>
             </div>
         </details>
     </div>
@@ -1062,6 +1063,7 @@
             { word: "did", meaning: "〜した（doの過去形）" }
         ],
 
+        //地理
         europe: [
             { meaning: "ウィーン",       imgFile: "./europe/austria.png",   countryName: "オーストリア" },
             { meaning: "ブリュッセル",   imgFile: "./europe/Belgium.png",   countryName: "ベルギー" },
@@ -1099,6 +1101,18 @@
             { meaning: "ブエノスアイレス", imgFile: "./america/argentina.png", countryName: "アルゼンチン" },
             { meaning: "ボゴタ",         imgFile: "./america/colombia.png", countryName: "コロンビア" },
             { meaning: "カラカス",       imgFile: "./america/venezuela.png", countryName: "ベネズエラ" }
+        ],
+        africa: [
+            { meaning: "アクラ",           imgFile: "./africa/Ghana.png",                         countryName: "ガーナ" },
+            { meaning: "アブジャ",         imgFile: "./africa/Nigeria.png",                       countryName: "ナイジェリア" },
+            { meaning: "カイロ",           imgFile: "./africa/Egypt.png",                         countryName: "エジプト" },
+            { meaning: "アディスアベバ",   imgFile: "./africa/Ethiopia.png",                      countryName: "エチオピア" },
+            { meaning: "ナイロビ",         imgFile: "./africa/Kenya.png",                         countryName: "ケニア" },
+            { meaning: "プレトリア",       imgFile: "./africa/SouthAfrica.png",                   countryName: "南アフリカ共和国" },
+            { meaning: "アルジェ",         imgFile: "./africa/Algeria.png",                       countryName: "アルジェリア" },
+            { meaning: "ヤムスクロ",       imgFile: "./africa/IvoryCoast.png",                     countryName: "コートジボワール" },
+            { meaning: "キンシャサ",       imgFile: "./africa/DemocraticRepublicoftheCongo.png", countryName: "コンゴ民主共和国" },
+            { meaning: "アンタナナリボ",   imgFile: "./africa/Madagascar.png",                    countryName: "マダガスカル" }
         ]
     };
 
@@ -1123,10 +1137,10 @@
         quizStartTime = Date.now();
 
         rawData.forEach(item => {
-            if (type === 'europe' || type === 'america') {
+            if (type === 'europe' || type === 'america' || type === 'africa') {
                 currentQuestions.push({
                     display: "表示された画像の国名・首都はどこでしょうか？",
-                    answer: `${item.countryName}・${item.meaning}`,
+                    answer: `国名：${item.countryName}　　首都：${item.meaning}`,
                     imgFile: item.imgFile,
                     countryName: item.countryName
                 });
