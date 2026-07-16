@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>一問一答 暗記アプリ</title>
+    <title>英ソフト　暗記アプリ</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -390,7 +390,7 @@
         </div>
 
         <details class="category-accordion">
-            <summary>中１英単語 レベル１:身のまわりの言葉</summary>
+            <summary>中１英単語 レベル１：身のまわりの言葉</summary>
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">月</span>
@@ -580,9 +580,10 @@
         <details class="category-accordion">
             <summary>中１地理 世界の国</summary>
             <div class="accordion-content" style="padding: 4px 14px 14px;">
-                <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
-                <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
+                <button class="menu-btn" onclick="startQuiz('asiaOceania')">アジア・オセアニア州の国・首都</button>
                 <button class="menu-btn" onclick="startQuiz('africa')">アフリカ州の国・首都</button>
+                <button class="menu-btn" onclick="startQuiz('america')">南北アメリカ州の国・首都</button>
+                <button class="menu-btn" onclick="startQuiz('europe')">ヨーロッパ州の国・首都</button>
             </div>
         </details>
     </div>
@@ -1113,6 +1114,30 @@
             { meaning: "ヤムスクロ",       imgFile: "./africa/IvoryCoast.png",                     countryName: "コートジボワール" },
             { meaning: "キンシャサ",       imgFile: "./africa/DemocraticRepublicoftheCongo.png", countryName: "コンゴ民主共和国" },
             { meaning: "アンタナナリボ",   imgFile: "./africa/Madagascar.png",                    countryName: "マダガスカル" }
+        ],
+        asiaOceania: [
+            { meaning: "モスクワ",         imgFile: "./asia-oceania/Russia.png",             countryName: "ロシア連邦" },
+            { meaning: "アンカラ",         imgFile: "./asia-oceania/Turkey.png",             countryName: "トルコ" },
+            { meaning: "エルサレム",       imgFile: "./asia-oceania/Israel.png",             countryName: "イスラエル" },
+            { meaning: "バグダッド",       imgFile: "./asia-oceania/Iraq.png",               countryName: "イラク" },
+            { meaning: "テヘラン",         imgFile: "./asia-oceania/Iran.png",               countryName: "イラン" },
+            { meaning: "リヤド",           imgFile: "./asia-oceania/SaudiArabia.png",        countryName: "サウジアラビア" },
+            { meaning: "アブダビ",         imgFile: "./asia-oceania/UnitedArabEmirates.png", countryName: "アラブ首長国連邦" },
+            { meaning: "イスラマバード",   imgFile: "./asia-oceania/Pakistan.png",           countryName: "パキスタン" },
+            { meaning: "デリー",     imgFile: "./asia-oceania/India.png",              countryName: "インド" },
+            { meaning: "ダッカ",           imgFile: "./asia-oceania/Bangladesh.png",         countryName: "バングラデシュ" },
+            { meaning: "ウランバートル",   imgFile: "./asia-oceania/Mongolia.png",           countryName: "モンゴル" },
+            { meaning: "ペキン（北京）",   imgFile: "./asia-oceania/China.png",              countryName: "中華人民共和国" },
+            { meaning: "ピョンヤン（平壌）", imgFile: "./asia-oceania/NorthKorea.png",         countryName: "朝鮮民主主義人民共和国（北朝鮮）" },
+            { meaning: "ソウル",           imgFile: "./asia-oceania/SouthKorea.png",         countryName: "大韓民国（韓国）" },
+            { meaning: "バンコク",         imgFile: "./asia-oceania/Thailand.png",           countryName: "タイ" },
+            { meaning: "ハノイ",           imgFile: "./asia-oceania/Vietnam.png",            countryName: "ベトナム" },
+            { meaning: "クアラルンプール", imgFile: "./asia-oceania/Malaysia.png",           countryName: "マレーシア" },
+            { meaning: "シンガポール",     imgFile: "./asia-oceania/Singapore.png",          countryName: "シンガポール" },
+            { meaning: "マニラ",           imgFile: "./asia-oceania/Philippines.png",        countryName: "フィリピン" },
+            { meaning: "ジャカルタ",       imgFile: "./asia-oceania/Indonesia.png",          countryName: "インドネシア" },
+            { meaning: "キャンベラ",       imgFile: "./asia-oceania/Australia.png",          countryName: "オーストラリア" },
+            { meaning: "ウェリントン",     imgFile: "./asia-oceania/NewZealand.png",         countryName: "ニュージーランド" }
         ]
     };
 
@@ -1137,7 +1162,7 @@
         quizStartTime = Date.now();
 
         rawData.forEach(item => {
-            if (type === 'europe' || type === 'america' || type === 'africa') {
+            if (type === 'europe' || type === 'america' || type === 'africa' || type === 'asiaOceania') {
                 currentQuestions.push({
                     display: "表示された画像の国名・首都はどこでしょうか？",
                     answer: `国名：${item.countryName}　　首都：${item.meaning}`,
