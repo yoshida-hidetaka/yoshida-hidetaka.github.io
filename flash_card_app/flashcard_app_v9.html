@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>英ソフト　暗記アプリ</title>
+    <title>英ソフト 暗記アプリ</title>
     <style>
         body {
             font-family: 'Helvetica Neue', Arial, sans-serif;
@@ -106,7 +106,7 @@
             transform: rotate(90deg);
             color: #3b82f6;
         }
-        /* アコーディオン内部のコンテンツ領域 */
+        /* アコーディオン内部 of コンテンツ領域 */
         .accordion-content {
             padding: 12px 14px;
             background-color: #ffffff;
@@ -131,19 +131,25 @@
             color: #334155;
             word-break: break-all;
         }
-        .count-badge {
-            font-size: 11px;
-            font-weight: 700;
-            color: #64748b;
-            background: #e2e8f0;
-            border-radius: 99px;
-            padding: 2px 8px;
-            white-space: nowrap;
-            min-width: 34px;
-            text-align: center;
+
+        /* 学習情報（回数・日付）をまとめるコンテナ */
+        .study-info-container {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            text-align: right;
             flex-shrink: 0;
         }
-        .count-badge:empty { display: none; }
+
+        /* 学習情報テキスト全体のスタイル（枠線なし） */
+        .study-info-text {
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            white-space: nowrap;
+        }
+        .study-info-text:empty { display: none; }
+
         .quiz-row-buttons {
             display: flex;
             gap: 8px;
@@ -327,59 +333,125 @@
         .speak-btn:hover  { opacity: 1; background: rgba(59,130,246,0.1); }
         .speak-btn:active { transform: scale(0.90); }
 
-        /* ── 学習モード トグル ── */
-        .learn-toggle-row {
+        /* ── モード切替エリア ── */
+        .mode-select-row {
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 12px;
+            gap: 16px;
             background: #f1f5f9;
-            border-radius: 10px;
+            border-radius: 12px;
             padding: 12px 18px;
             margin: 16px 0 12px;
         }
-        .learn-toggle-label {
+        .mode-option {
+            display: flex;
+            align-items: center;
+            gap: 6px;
             font-size: 15px;
             font-weight: 700;
-            color: #334155;
-        }
-        .toggle-switch {
-            position: relative;
-            display: inline-block;
-            width: 52px;
-            height: 28px;
-            flex-shrink: 0;
-        }
-        .toggle-switch input { opacity: 0; width: 0; height: 0; }
-        .toggle-slider {
-            position: absolute;
+            color: #475569;
             cursor: pointer;
-            inset: 0;
-            background: #cbd5e1;
-            border-radius: 28px;
-            transition: .25s;
+            user-select: none;
+            transition: color 0.2s ease;
         }
-        .toggle-slider:before {
-            position: absolute;
-            content: "";
-            height: 22px; width: 22px;
-            left: 3px; bottom: 3px;
-            background: white;
-            border-radius: 50%;
-            transition: .25s;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+        .mode-option input[type="radio"] {
+            margin: 0;
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #10b981;
         }
-        input:checked + .toggle-slider { background: #10b981; }
-        input:checked + .toggle-slider:before { transform: translateX(24px); }
-        .learn-mode-badge {
-            font-size: 13px;
-            font-weight: 600;
-            color: #64748b;
-            min-width: 24px;
+        .mode-option:hover {
+            color: #1e293b;
         }
-        input:checked ~ .learn-mode-badge { color: #10b981; }
+        .mode-option.active-mode {
+            color: #10b981;
+        }
+
         /* 学習モード 次へボタン */
         .next-btn { background-color: #6366f1; color: white; width: 85%; }
+
+        /* ── 学習情報のダッシュボード表示スタイル ── */
+        .study-dashboard {
+            display: flex;
+            justify-content: space-between;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 12px 16px;
+            margin: 10px 0 20px;
+            gap: 16px;
+        }
+        .study-dashboard-col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            text-align: left;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .study-dashboard-col.today {
+            color: #1e40af;
+            border-right: 1px solid #e2e8f0;
+            padding-right: 12px;
+        }
+        .study-dashboard-col.total {
+            color: #166534;
+            padding-left: 4px;
+        }
+        .dashboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .dashboard-val {
+            font-size: 15px;
+            font-weight: 700;
+        }
+
+        /* 四択モード用の選択肢ボタンスタイル */
+        .choices-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 20px 0;
+            width: 100%;
+        }
+        .choice-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 16px;
+            font-weight: 600;
+            background-color: #ffffff;
+            color: #1e293b;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .choice-btn:hover {
+            background-color: #f1f5f9;
+            border-color: #cbd5e1;
+            transform: translateY(-1px);
+        }
+        .choice-btn:active {
+            transform: translateY(1px);
+        }
+        /* 四択即時フィードバック用 */
+        .choice-btn.correct-choice {
+            background-color: #d1fae5 !important;
+            border-color: #10b981 !important;
+            color: #065f46 !important;
+        }
+        .choice-btn.incorrect-choice {
+            background-color: #fee2e2 !important;
+            border-color: #ef4444 !important;
+            color: #991b1b !important;
+        }
     </style>
 </head>
 <body>
@@ -387,22 +459,47 @@
 <div class="container">
     <div id="menu-screen" class="screen active">
         <h1>暗記アプリ</h1>
-        <div class="learn-toggle-row">
-            <span class="learn-toggle-label">📖 学習モード</span>
-            <label class="toggle-switch">
-                <input type="checkbox" id="learningModeToggle" onchange="toggleLearningMode(this.checked)">
-                <span class="toggle-slider"></span>
+        
+        <div class="mode-select-row">
+            <label class="mode-option" id="label-learn">
+                <input type="radio" name="playMode" value="learn" onchange="changePlayMode('learn')">
+                <span>学習モード</span>
             </label>
-            <span id="learn-mode-badge" class="learn-mode-badge">オフ</span>
+            <label class="mode-option" id="label-fourChoice">
+                <input type="radio" name="playMode" value="fourChoice" onchange="changePlayMode('fourChoice')">
+                <span>四択モード</span>
+            </label>
+            <label class="mode-option active-mode" id="label-test">
+                <input type="radio" name="playMode" value="test" checked onchange="changePlayMode('test')">
+                <span>試験モード</span>
+            </label>
         </div>
+
         <p style="color: #64748b; font-size: 13px; margin-bottom:12px;">
             カテゴリーをタップして問題を選択してください
         </p>
-        <div style="background:#eff6ff;border:1px solid #bfdbfe;border-radius:10px;padding:10px 16px;margin:8px 0 4px;font-size:15px;color:#1e40af;font-weight:600;">
-            📚 今日の学習時間：<span id="today-study-time">0分</span>
-        </div>
-        <div style="background:#f0fdf4;border:1px solid #bbf7d0;border-radius:10px;padding:10px 16px;margin:0 0 16px;font-size:15px;color:#166534;font-weight:600;">
-            📖 総学習時間：<span id="total-study-time">0分</span>
+
+        <div class="study-dashboard">
+            <div class="study-dashboard-col today">
+                <div class="dashboard-item">
+                    <span>📚 今日の学習時間:</span>
+                    <span id="today-study-time" class="dashboard-val">0分</span>
+                </div>
+                <div class="dashboard-item">
+                    <span>📖 今日の学習回数:</span>
+                    <span id="today-study-count" class="dashboard-val">0回</span>
+                </div>
+            </div>
+            <div class="study-dashboard-col total">
+                <div class="dashboard-item">
+                    <span>📖 総学習時間:</span>
+                    <span id="total-study-time" class="dashboard-val">0分</span>
+                </div>
+                <div class="dashboard-item">
+                    <span>🔥 総学習回数:</span>
+                    <span id="total-study-count" class="dashboard-val">0回</span>
+                </div>
+            </div>
         </div>
 
         <details class="category-accordion">
@@ -410,7 +507,10 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">月</span>
-                    <span class="count-badge" id="count-months"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-months"></span>
+                        <span class="study-info-text" id="lastDate-months"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('months', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('months', 'en2ja')">英→日</button>
@@ -419,7 +519,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">曜日</span>
-                    <span class="count-badge" id="count-days"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-days"></span>
+                        <span class="study-info-text" id="lastDate-days"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('days', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('days', 'en2ja')">英→日</button>
@@ -428,7 +531,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">身の回り品</span>
-                    <span class="count-badge" id="count-goods"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-goods"></span>
+                        <span class="study-info-text" id="lastDate-goods"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('goods', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('goods', 'en2ja')">英→日</button>
@@ -437,7 +543,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">人々・職業</span>
-                    <span class="count-badge" id="count-people"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-people"></span>
+                        <span class="study-info-text" id="lastDate-people"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('people', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('people', 'en2ja')">英→日</button>
@@ -446,7 +555,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">食べ物・飲み物</span>
-                    <span class="count-badge" id="count-foods"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-foods"></span>
+                        <span class="study-info-text" id="lastDate-foods"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('foods', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('foods', 'en2ja')">英→日</button>
@@ -455,7 +567,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">自然・動物</span>
-                    <span class="count-badge" id="count-nature"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-nature"></span>
+                        <span class="study-info-text" id="lastDate-nature"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('nature', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('nature', 'en2ja')">英→日</button>
@@ -464,7 +579,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">時・カレンダー</span>
-                    <span class="count-badge" id="count-time"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-time"></span>
+                        <span class="study-info-text" id="lastDate-time"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('time', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('time', 'en2ja')">英→日</button>
@@ -473,7 +591,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">スポーツ・趣味・教科</span>
-                    <span class="count-badge" id="count-interests"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-interests"></span>
+                        <span class="study-info-text" id="lastDate-interests"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('interests', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('interests', 'en2ja')">英→日</button>
@@ -482,7 +603,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">挨拶・感情</span>
-                    <span class="count-badge" id="count-feelings"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-feelings"></span>
+                        <span class="study-info-text" id="lastDate-feelings"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('feelings', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('feelings', 'en2ja')">英→日</button>
@@ -496,7 +620,10 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">代名詞・主格・所有格</span>
-                    <span class="count-badge" id="count-pronouns"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-pronouns"></span>
+                        <span class="study-info-text" id="lastDate-pronouns"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('pronouns', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('pronouns', 'en2ja')">英→日</button>
@@ -505,7 +632,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">be動詞</span>
-                    <span class="count-badge" id="count-verbs"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-verbs"></span>
+                        <span class="study-info-text" id="lastDate-verbs"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('verbs', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('verbs', 'en2ja')">英→日</button>
@@ -514,7 +644,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">基本的な一般動詞</span>
-                    <span class="count-badge" id="count-actions"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-actions"></span>
+                        <span class="study-info-text" id="lastDate-actions"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('actions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('actions', 'en2ja')">英→日</button>
@@ -528,7 +661,10 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">形容詞・様子・性質</span>
-                    <span class="count-badge" id="count-descriptions"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-descriptions"></span>
+                        <span class="study-info-text" id="lastDate-descriptions"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('descriptions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('descriptions', 'en2ja')">英→日</button>
@@ -537,7 +673,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">副詞・程度・方法</span>
-                    <span class="count-badge" id="count-details"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-details"></span>
+                        <span class="study-info-text" id="lastDate-details"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('details', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('details', 'en2ja')">英→日</button>
@@ -546,7 +685,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">前置詞・位置・時間</span>
-                    <span class="count-badge" id="count-positions"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-positions"></span>
+                        <span class="study-info-text" id="lastDate-positions"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('positions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('positions', 'en2ja')">英→日</button>
@@ -555,7 +697,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">接続詞</span>
-                    <span class="count-badge" id="count-links"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-links"></span>
+                        <span class="study-info-text" id="lastDate-links"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('links', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('links', 'en2ja')">英→日</button>
@@ -564,7 +709,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">助動詞・can</span>
-                    <span class="count-badge" id="count-helpers"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-helpers"></span>
+                        <span class="study-info-text" id="lastDate-helpers"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('helpers', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('helpers', 'en2ja')">英→日</button>
@@ -578,7 +726,10 @@
             <div class="accordion-content">
                 <div class="quiz-row">
                     <span class="quiz-row-label">疑問詞</span>
-                    <span class="count-badge" id="count-questions"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-questions"></span>
+                        <span class="study-info-text" id="lastDate-questions"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('questions', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('questions', 'en2ja')">英→日</button>
@@ -587,7 +738,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">代名詞の目的格</span>
-                    <span class="count-badge" id="count-objects"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-objects"></span>
+                        <span class="study-info-text" id="lastDate-objects"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('objects', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('objects', 'en2ja')">英→日</button>
@@ -596,7 +750,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">三人称単数現在形</span>
-                    <span class="count-badge" id="count-singulars"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-singulars"></span>
+                        <span class="study-info-text" id="lastDate-singulars"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('singulars', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('singulars', 'en2ja')">英→日</button>
@@ -605,7 +762,10 @@
 
                 <div class="quiz-row">
                     <span class="quiz-row-label">過去形・be動詞/一般動詞</span>
-                    <span class="count-badge" id="count-past"></span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-past"></span>
+                        <span class="study-info-text" id="lastDate-past"></span>
+                    </div>
                     <div class="quiz-row-buttons">
                         <button class="quiz-sub-btn" onclick="startQuiz('past', 'ja2en')">日→英</button>
                         <button class="quiz-sub-btn" onclick="startQuiz('past', 'en2ja')">英→日</button>
@@ -617,10 +777,46 @@
         <details class="category-accordion">
             <summary>中１地理 世界の国</summary>
             <div class="accordion-content" style="padding: 4px 14px 14px;">
-                <div class="quiz-row"><span class="quiz-row-label">アジア・オセアニア州の国・首都</span><span class="count-badge" id="count-asiaOceania"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('asiaOceania')">開始</button></div></div>
-                <div class="quiz-row"><span class="quiz-row-label">アフリカ州の国・首都</span><span class="count-badge" id="count-africa"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('africa')">開始</button></div></div>
-                <div class="quiz-row"><span class="quiz-row-label">南北アメリカ州の国・首都</span><span class="count-badge" id="count-america"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('america')">開始</button></div></div>
-                <div class="quiz-row"><span class="quiz-row-label">ヨーロッパ州の国・首都</span><span class="count-badge" id="count-europe"></span><div class="quiz-row-buttons"><button class="quiz-sub-btn" onclick="startQuiz('europe')">開始</button></div></div>
+                <div class="quiz-row">
+                    <span class="quiz-row-label">アジア・オセアニア州の国・首都</span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-asiaOceania"></span>
+                        <span class="study-info-text" id="lastDate-asiaOceania"></span>
+                    </div>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('asiaOceania', 'map')">開始</button>
+                    </div>
+                </div>
+                <div class="quiz-row">
+                    <span class="quiz-row-label">アフリカ州の国・首都</span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-africa"></span>
+                        <span class="study-info-text" id="lastDate-africa"></span>
+                    </div>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('africa', 'map')">開始</button>
+                    </div>
+                </div>
+                <div class="quiz-row">
+                    <span class="quiz-row-label">南北アメリカ州の国・首都</span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-america"></span>
+                        <span class="study-info-text" id="lastDate-america"></span>
+                    </div>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('america', 'map')">開始</button>
+                    </div>
+                </div>
+                <div class="quiz-row">
+                    <span class="quiz-row-label">ヨーロッパ州の国・首都</span>
+                    <div class="study-info-container">
+                        <span class="study-info-text" id="count-europe"></span>
+                        <span class="study-info-text" id="lastDate-europe"></span>
+                    </div>
+                    <div class="quiz-row-buttons">
+                        <button class="quiz-sub-btn" onclick="startQuiz('europe', 'map')">開始</button>
+                    </div>
+                </div>
             </div>
         </details>
     </div>
@@ -637,6 +833,11 @@
         
         <div id="meaning-box">
             <div id="meaning" class="meaning-display hidden">-</div>
+        </div>
+
+        <!-- 四択モード用の選択肢コンテナ -->
+        <div id="choices-container" style="display: none;">
+            <div id="choices-list" class="choices-grid"></div>
         </div>
 
         <div id="action-before">
@@ -675,645 +876,767 @@
 <script>
     const datasets = {
         months: [
-            { word: "January", meaning: "1月" },
-            { word: "February", meaning: "2月" },
-            { word: "March", meaning: "3月" },
-            { word: "April", meaning: "4月" },
-            { word: "May", meaning: "5月" },
-            { word: "June", meaning: "6月" },
-            { word: "July", meaning: "7月" },
-            { word: "August", meaning: "8月" },
-            { word: "September", meaning: "9月" },
-            { word: "October", meaning: "10月" },
-            { word: "November", meaning: "11月" },
-            { word: "December", meaning: "12月" }
+            { word: "January", meaning: "1月", otherwords: ["February", "March", "April"], othermeans: ["2月", "3月", "4月"] },
+            { word: "February", meaning: "2月", otherwords: ["January", "March", "May"], othermeans: ["1月", "3月", "5月"] },
+            { word: "March", meaning: "3月", otherwords: ["February", "April", "June"], othermeans: ["2月", "4月", "6月"] },
+            { word: "April", meaning: "4月", otherwords: ["March", "May", "July"], othermeans: ["3月", "5月", "7月"] },
+            { word: "May", meaning: "5月", otherwords: ["April", "June", "August"], othermeans: ["4月", "6月", "8月"] },
+            { word: "June", meaning: "6月", otherwords: ["May", "July", "September"], othermeans: ["5月", "7月", "9月"] },
+            { word: "July", meaning: "7月", otherwords: ["June", "August", "October"], othermeans: ["6月", "8月", "10月"] },
+            { word: "August", meaning: "8月", otherwords: ["July", "September", "November"], othermeans: ["7月", "9月", "11月"] },
+            { word: "September", meaning: "9月", otherwords: ["August", "October", "December"], othermeans: ["8月", "10月", "12月"] },
+            { word: "October", meaning: "10月", otherwords: ["September", "November", "January"], othermeans: ["9月", "11月", "1月"] },
+            { word: "November", meaning: "11月", otherwords: ["October", "December", "February"], othermeans: ["10月", "12月", "2月"] },
+            { word: "December", meaning: "12月", otherwords: ["November", "January", "March"], othermeans: ["11月", "1月", "3月"] }
         ],
         days: [
-            { word: "Sunday", meaning: "日曜日" },
-            { word: "Monday", meaning: "月曜日" },
-            { word: "Tuesday", meaning: "火曜日" },
-            { word: "Wednesday", meaning: "水曜日" },
-            { word: "Thursday", meaning: "木曜日" },
-            { word: "Friday", meaning: "金曜日" },
-            { word: "Saturday", meaning: "土曜日" }
+            { word: "Sunday", meaning: "日曜日", otherwords: ["Monday", "Tuesday", "Wednesday"], othermeans: ["月曜日", "火曜日", "水曜日"] },
+            { word: "Monday", meaning: "月曜日", otherwords: ["Sunday", "Tuesday", "Thursday"], othermeans: ["日曜日", "火曜日", "木曜日"] },
+            { word: "Tuesday", meaning: "火曜日", otherwords: ["Monday", "Wednesday", "Friday"], othermeans: ["月曜日", "水曜日", "金曜日"] },
+            { word: "Wednesday", meaning: "水曜日", otherwords: ["Tuesday", "Thursday", "Saturday"], othermeans: ["火曜日", "木曜日", "土曜日"] },
+            { word: "Thursday", meaning: "木曜日", otherwords: ["Wednesday", "Friday", "Sunday"], othermeans: ["水曜日", "金曜日", "日曜日"] },
+            { word: "Friday", meaning: "金曜日", otherwords: ["Thursday", "Saturday", "Monday"], othermeans: ["木曜日", "土曜日", "月曜日"] },
+            { word: "Saturday", meaning: "土曜日", otherwords: ["Friday", "Sunday", "Tuesday"], othermeans: ["金曜日", "日曜日", "火曜日"] }
         ],
         goods: [
-            { word: "desk", meaning: "机" },
-            { word: "chair", meaning: "椅子" },
-            { word: "table", meaning: "テーブル" },
-            { word: "blackboard", meaning: "黒板" },
-            { word: "pen", meaning: "ペン" },
-            { word: "pencil", meaning: "鉛筆" },
-            { word: "eraser", meaning: "消しゴム" },
-            { word: "notebook", meaning: "ノート" },
-            { word: "ruler", meaning: "ものさし" },
-            { word: "pencil case", meaning: "筆箱" },
-            { word: "textbook", meaning: "教科書" },
-            { word: "dictionary", meaning: "辞書" },
-            { word: "bag", meaning: "かばん" },
-            { word: "cap", meaning: "帽子（野球帽など）" },
-            { word: "hat", meaning: "帽子（ハットなど）" },
-            { word: "clock", meaning: "時計（掛け・置き時計）" },
-            { word: "watch", meaning: "腕時計" },
-            { word: "key", meaning: "鍵" },
-            { word: "box", meaning: "箱" },
-            { word: "picture", meaning: "写真・絵" },
-            { word: "map", meaning: "地図" },
-            { word: "card", meaning: "カード" }
+            { word: "desk", meaning: "机", otherwords: ["chair", "table", "blackboard"], othermeans: ["椅子", "テーブル", "黒板"] },
+            { word: "chair", meaning: "椅子", otherwords: ["desk", "table", "box"], othermeans: ["机", "テーブル", "箱"] },
+            { word: "table", meaning: "テーブル", otherwords: ["desk", "chair", "blackboard"], othermeans: ["机", "椅子", "黒板"] },
+            { word: "blackboard", meaning: "黒板", otherwords: ["desk", "ruler", "textbook"], othermeans: ["机", "ものさし", "教科書"] },
+            { word: "pen", meaning: "ペン", otherwords: ["pencil", "eraser", "ruler"], othermeans: ["鉛筆", "消しゴム", "ものさし"] },
+            { word: "pencil", meaning: "鉛筆", otherwords: ["pen", "eraser", "pencil case"], othermeans: ["ペン", "消しゴム", "筆箱"] },
+            { word: "eraser", meaning: "消しゴム", otherwords: ["pen", "pencil", "notebook"], othermeans: ["ペン", "鉛筆", "ノート"] },
+            { word: "notebook", meaning: "ノート", otherwords: ["textbook", "dictionary", "paper"], othermeans: ["教科書", "辞書", "手帳"] },
+            { word: "ruler", meaning: "ものさし", otherwords: ["pencil", "eraser", "pencil case"], othermeans: ["鉛筆", "消しゴム", "筆箱"] },
+            { word: "pencil case", meaning: "筆箱", otherwords: ["pen", "pencil", "eraser"], othermeans: ["ペン", "鉛筆", "消しゴム"] },
+            { word: "textbook", meaning: "教科書", otherwords: ["notebook", "dictionary", "bag"], othermeans: ["ノート", "辞書", "かばん"] },
+            { word: "dictionary", meaning: "辞書", otherwords: ["textbook", "notebook", "book"], othermeans: ["教科書", "ノート", "本"] },
+            { word: "bag", meaning: "かばん", otherwords: ["box", "pencil case", "cap"], othermeans: ["箱", "筆箱", "帽子（野球帽など）"] },
+            { word: "cap", meaning: "帽子（野球帽など）", otherwords: ["hat", "bag", "watch"], othermeans: ["帽子（ハットなど）", "かばん", "腕時計"] },
+            { word: "hat", meaning: "帽子（ハットなど）", otherwords: ["cap", "bag", "key"], othermeans: ["帽子（野球帽など）", "かばん", "鍵"] },
+            { word: "clock", meaning: "時計（掛け・置き時計）", otherwords: ["watch", "picture", "map"], othermeans: ["腕時計", "写真・絵", "地図"] },
+            { word: "watch", meaning: "腕時計", otherwords: ["clock", "key", "card"], othermeans: ["時計（掛け・置き時計）", "鍵", "カード"] },
+            { word: "key", meaning: "鍵", otherwords: ["box", "bag", "watch"], othermeans: ["箱", "かばん", "腕時計"] },
+            { word: "box", meaning: "箱", otherwords: ["bag", "key", "table"], othermeans: ["かばん", "鍵", "テーブル"] },
+            { word: "picture", meaning: "写真・絵", otherwords: ["map", "card", "clock"], othermeans: ["地図", "カード", "時計（掛け・置き時計）"] },
+            { word: "map", meaning: "地図", otherwords: ["picture", "card", "textbook"], othermeans: ["写真・絵", "カード", "教科書"] },
+            { word: "card", meaning: "カード", otherwords: ["picture", "map", "key"], othermeans: ["写真・絵", "地図", "鍵"] }
         ],
         people: [
-            { word: "family", meaning: "家族" },
-            { word: "father", meaning: "父" },
-            { word: "mother", meaning: "母" },
-            { word: "parent", meaning: "親" },
-            { word: "brother", meaning: "兄・弟" },
-            { word: "sister", meaning: "姉・妹" },
-            { word: "grandfather", meaning: "祖父" },
-            { word: "grandmother", meaning: "祖母" },
-            { word: "uncle", meaning: "おじ" },
-            { word: "aunt", meaning: "おば" },
-            { word: "cousin", meaning: "いとこ" },
-            { word: "baby", meaning: "赤ちゃん" },
-            { word: "man", meaning: "男の人" },
-            { word: "woman", meaning: "女の人" },
-            { word: "boy", meaning: "男の子" },
-            { word: "girl", meaning: "女の子" },
-            { word: "friend", meaning: "友達" },
-            { word: "teacher", meaning: "先生" },
-            { word: "student", meaning: "生徒" },
-            { word: "doctor", meaning: "医者" },
-            { word: "nurse", meaning: "看護師" },
-            { word: "singer", meaning: "歌手" },
-            { word: "player", meaning: "選手" }
+            { word: "family", meaning: "家族", otherwords: ["parent", "friend", "baby"], othermeans: ["親", "友達", "赤ちゃん"] },
+            { word: "father", meaning: "父", otherwords: ["mother", "brother", "grandfather"], othermeans: ["母", "兄・弟", "祖父"] },
+            { word: "mother", meaning: "母", otherwords: ["father", "sister", "grandmother"], othermeans: ["父", "姉・妹", "祖母"] },
+            { word: "parent", meaning: "親", otherwords: ["family", "baby", "child"], othermeans: ["家族", "赤ちゃん", "子ども"] },
+            { word: "brother", meaning: "兄・弟", otherwords: ["sister", "father", "cousin"], othermeans: ["姉・妹", "父", "いとこ"] },
+            { word: "sister", meaning: "姉・妹", otherwords: ["brother", "mother", "cousin"], othermeans: ["兄・弟", "母", "いとこ"] },
+            { word: "grandfather", meaning: "祖父", otherwords: ["grandmother", "father", "uncle"], othermeans: ["祖母", "父", "おじ"] },
+            { word: "grandmother", meaning: "祖母", otherwords: ["grandfather", "mother", "aunt"], othermeans: ["祖父", "母", "おば"] },
+            { word: "uncle", meaning: "おじ", otherwords: ["aunt", "grandfather", "cousin"], othermeans: ["おば", "祖父", "いとこ"] },
+            { word: "aunt", meaning: "おば", otherwords: ["uncle", "grandmother", "cousin"], othermeans: ["おじ", "祖母", "いとこ"] },
+            { word: "cousin", meaning: "いとこ", otherwords: ["brother", "sister", "friend"], othermeans: ["兄・弟", "姉・妹", "友達"] },
+            { word: "baby", meaning: "赤ちゃん", otherwords: ["boy", "girl", "parent"], othermeans: ["男の子", "女の子", "親"] },
+            { word: "man", meaning: "男の人", otherwords: ["woman", "boy", "doctor"], othermeans: ["女の人", "男の子", "医者"] },
+            { word: "woman", meaning: "女の人", otherwords: ["man", "girl", "nurse"], othermeans: ["男の人", "女の子", "看護師"] },
+            { word: "boy", meaning: "男の子", otherwords: ["girl", "baby", "man"], othermeans: ["女の子", "赤ちゃん", "男の人"] },
+            { word: "girl", meaning: "女の子", otherwords: ["boy", "baby", "woman"], othermeans: ["男の子", "赤ちゃん", "女の人"] },
+            { word: "friend", meaning: "友達", otherwords: ["family", "student", "teacher"], othermeans: ["家族", "生徒", "先生"] },
+            { word: "teacher", meaning: "先生", otherwords: ["student", "doctor", "nurse"], othermeans: ["生徒", "医者", "看護師"] },
+            { word: "student", meaning: "生徒", otherwords: ["teacher", "friend", "player"], othermeans: ["先生", "友達", "選手"] },
+            { word: "doctor", meaning: "医者", otherwords: ["nurse", "teacher", "singer"], othermeans: ["看護師", "先生", "歌手"] },
+            { word: "nurse", meaning: "看護師", otherwords: ["doctor", "teacher", "student"], othermeans: ["医者", "先生", "生徒"] },
+            { word: "singer", meaning: "歌手", otherwords: ["player", "doctor", "teacher"], othermeans: ["選手", "医者", "先生"] },
+            { word: "player", meaning: "選手", otherwords: ["singer", "student", "friend"], othermeans: ["歌手", "生徒", "友達"] }
         ],
         foods: [
-            { word: "food", meaning: "食べ物" },
-            { word: "water", meaning: "水" },
-            { word: "milk", meaning: "牛乳" },
-            { word: "tea", meaning: "茶・紅茶" },
-            { word: "coffee", meaning: "コーヒー" },
-            { word: "juice", meaning: "ジュース" },
-            { word: "rice", meaning: "米・ご飯" },
-            { word: "bread", meaning: "パン" },
-            { word: "egg", meaning: "卵" },
-            { word: "meat", meaning: "肉" },
-            { word: "beef", meaning: "牛肉" },
-            { word: "pork", meaning: "豚肉" },
-            { word: "chicken", meaning: "鶏肉" },
-            { word: "fish", meaning: "魚" },
-            { word: "salad", meaning: "サラダ" },
-            { word: "soup", meaning: "スープ" },
-            { word: "apple", meaning: "りんご" },
-            { word: "banana", meaning: "バナナ" },
-            { word: "orange", meaning: "オレンジ" },
-            { word: "lemon", meaning: "レモン" },
-            { word: "cake", meaning: "ケーキ" },
-            { word: "ice cream", meaning: "アイスクリーム" },
-            { word: "breakfast", meaning: "朝食" },
-            { word: "lunch", meaning: "昼食" },
-            { word: "dinner", meaning: "夕食" }
+            { word: "food", meaning: "食べ物", otherwords: ["water", "rice", "bread"], othermeans: ["水", "米・ご飯", "パン"] },
+            { word: "water", meaning: "水", otherwords: ["milk", "tea", "juice"], othermeans: ["牛乳", "茶・紅茶", "ジュース"] },
+            { word: "milk", meaning: "牛乳", otherwords: ["water", "coffee", "juice"], othermeans: ["水", "コーヒー", "ジュース"] },
+            { word: "tea", meaning: "茶・紅茶", otherwords: ["water", "coffee", "milk"], othermeans: ["水", "コーヒー", "牛乳"] },
+            { word: "coffee", meaning: "コーヒー", otherwords: ["tea", "milk", "juice"], othermeans: ["茶・紅茶", "牛乳", "ジュース"] },
+            { word: "juice", meaning: "ジュース", otherwords: ["water", "milk", "tea"], othermeans: ["水", "牛乳", "茶・紅茶"] },
+            { word: "rice", meaning: "米・ご飯", otherwords: ["bread", "egg", "soup"], othermeans: ["パン", "卵", "スープ"] },
+            { word: "bread", meaning: "パン", otherwords: ["rice", "cake", "egg"], othermeans: ["米・ご飯", "ケーキ", "卵"] },
+            { word: "egg", meaning: "卵", otherwords: ["meat", "fish", "rice"], othermeans: ["肉", "魚", "米・ご飯"] },
+            { word: "meat", meaning: "肉", otherwords: ["fish", "egg", "salad"], othermeans: ["魚", "卵", "サラダ"] },
+            { word: "beef", meaning: "牛肉", otherwords: ["pork", "chicken", "fish"], othermeans: ["豚肉", "鶏肉", "魚"] },
+            { word: "pork", meaning: "豚肉", otherwords: ["beef", "chicken", "fish"], othermeans: ["牛肉", "鶏肉", "魚"] },
+            { word: "chicken", meaning: "鶏肉", otherwords: ["beef", "pork", "egg"], othermeans: ["牛肉", "豚肉", "卵"] },
+            { word: "fish", meaning: "魚", otherwords: ["meat", "egg", "salad"], othermeans: ["肉", "卵", "サラダ"] },
+            { word: "salad", meaning: "サラダ", otherwords: ["soup", "meat", "fish"], othermeans: ["スープ", "肉", "魚"] },
+            { word: "soup", meaning: "スープ", otherwords: ["salad", "water", "rice"], othermeans: ["サラダ", "水", "米・ご飯"] },
+            { word: "apple", meaning: "りんご", otherwords: ["banana", "orange", "lemon"], othermeans: ["バナナ", "オレンジ", "レモン"] },
+            { word: "banana", meaning: "バナナ", otherwords: ["apple", "orange", "lemon"], othermeans: ["りんご", "オレンジ", "レモン"] },
+            { word: "orange", meaning: "オレンジ", otherwords: ["apple", "banana", "lemon"], othermeans: ["りんご", "バナナ", "レモン"] },
+            { word: "lemon", meaning: "レモン", otherwords: ["apple", "banana", "orange"], othermeans: ["りんご", "バナナ", "オレンジ"] },
+            { word: "cake", meaning: "ケーキ", otherwords: ["ice cream", "bread", "egg"], othermeans: ["アイスクリーム", "パン", "卵"] },
+            { word: "ice cream", meaning: "アイスクリーム", otherwords: ["cake", "juice", "milk"], othermeans: ["ケーキ", "ジュース", "牛乳"] },
+            { word: "breakfast", meaning: "朝食", otherwords: ["lunch", "dinner", "food"], othermeans: ["昼食", "夕食", "食べ物"] },
+            { word: "lunch", meaning: "昼食", otherwords: ["breakfast", "dinner", "soup"], othermeans: ["朝食", "夕食", "スープ"] },
+            { word: "dinner", meaning: "夕食", otherwords: ["breakfast", "lunch", "meat"], othermeans: ["朝食", "昼食", "肉"] }
         ],
         nature: [
-            { word: "animal", meaning: "動物" },
-            { word: "dog", meaning: "犬" },
-            { word: "cat", meaning: "猫" },
-            { word: "bird", meaning: "鳥" },
-            { word: "rabbit", meaning: "うさぎ" },
-            { word: "monkey", meaning: "猿" },
-            { word: "bear", meaning: "熊" },
-            { word: "lion", meaning: "ライオン" },
-            { word: "tiger", meaning: "トラ" },
-            { word: "elephant", meaning: "象" },
-            { word: "panda", meaning: "パンダ" },
-            { word: "horse", meaning: "馬" },
-            { word: "cow", meaning: "牛" },
-            { word: "sheep", meaning: "羊" },
-            { word: "mouse", meaning: "ネズミ" },
-            { word: "pet", meaning: "ペット" },
-            { word: "tree", meaning: "木" },
-            { word: "flower", meaning: "花" },
-            { word: "grass", meaning: "草" },
-            { word: "sea", meaning: "海" },
-            { word: "river", meaning: "川" },
-            { word: "mountain", meaning: "山" },
-            { word: "sky", meaning: "空" },
-            { word: "sun", meaning: "太陽" },
-            { word: "moon", meaning: "月" },
-            { word: "star", meaning: "星" }
+            { word: "animal", meaning: "動物", otherwords: ["bird", "tree", "flower"], othermeans: ["鳥", "木", "花"] },
+            { word: "dog", meaning: "犬", otherwords: ["cat", "rabbit", "bear"], othermeans: ["猫", "うさぎ", "熊"] },
+            { word: "cat", meaning: "猫", otherwords: ["dog", "rabbit", "panda"], othermeans: ["犬", "うさぎ", "パンダ"] },
+            { word: "bird", meaning: "鳥", otherwords: ["dog", "cat", "sheep"], othermeans: ["犬", "猫", "羊"] },
+            { word: "rabbit", meaning: "うさぎ", otherwords: ["dog", "cat", "bear"], othermeans: ["犬", "猫", "熊"] },
+            { word: "cow", meaning: "牛", otherwords: ["horse", "sheep", "dog"], othermeans: ["馬", "羊", "犬"] },
+            { word: "horse", meaning: "馬", otherwords: ["cow", "sheep", "bear"], othermeans: ["牛", "羊", "熊"] },
+            { word: "sheep", meaning: "羊", otherwords: ["cow", "horse", "rabbit"], othermeans: ["牛", "馬", "うさぎ"] },
+            { word: "bear", meaning: "熊", otherwords: ["lion", "panda", "dog"], othermeans: ["ライオン", "パンダ", "犬"] },
+            { word: "lion", meaning: "ライオン", otherwords: ["bear", "panda", "cat"], othermeans: ["熊", "パンダ", "猫"] },
+            { word: "panda", meaning: "パンダ", otherwords: ["bear", "lion", "rabbit"], othermeans: ["熊", "ライオン", "うさぎ"] },
+            { word: "flower", meaning: "花", otherwords: ["tree", "grass", "rose"], othermeans: ["木", "草・芝生", "バラ"] },
+            { word: "rose", meaning: "バラ", otherwords: ["lily", "flower", "tree"], othermeans: ["ユリ", "花", "木"] },
+            { word: "lily", meaning: "ユリ", otherwords: ["rose", "flower", "grass"], othermeans: ["バラ", "花", "草・芝生"] },
+            { word: "tree", meaning: "木", otherwords: ["grass", "forest", "flower"], othermeans: ["草・芝生", "森", "花"] },
+            { word: "grass", meaning: "草・芝生", otherwords: ["tree", "flower", "forest"], othermeans: ["木", "花", "森"] },
+            { word: "forest", meaning: "森", otherwords: ["mountain", "river", "tree"], othermeans: ["山", "川", "木"] },
+            { word: "mountain", meaning: "山", otherwords: ["river", "forest", "lake"], othermeans: ["川", "森", "湖"] },
+            { word: "river", meaning: "川", otherwords: ["sea", "lake", "mountain"], othermeans: ["海", "湖", "山"] },
+            { word: "sea", meaning: "海", otherwords: ["river", "lake", "sun"], othermeans: ["川", "湖", "太陽"] },
+            { word: "lake", meaning: "湖", otherwords: ["river", "sea", "mountain"], othermeans: ["川", "海", "山"] },
+            { word: "sun", meaning: "太陽", otherwords: ["moon", "star", "sea"], othermeans: ["月", "星", "海"] },
+            { word: "moon", meaning: "月", otherwords: ["sun", "star", "river"], othermeans: ["太陽", "星", "川"] },
+            { word: "star", meaning: "星", otherwords: ["sun", "moon", "tree"], othermeans: ["太陽", "月", "木"] }
         ],
         time: [
-            { word: "first", meaning: "1番目の" },
-            { word: "second", meaning: "2番目の" },
-            { word: "third", meaning: "3番目の" },
-            { word: "fourth", meaning: "4番目の" },
-            { word: "fifth", meaning: "5番目の" },
-            { word: "spring", meaning: "春" },
-            { word: "summer", meaning: "夏" },
-            { word: "autumn", meaning: "秋" },
-            { word: "fall", meaning: "秋" },
-            { word: "winter", meaning: "冬" },
-            { word: "time", meaning: "時間・回" },
-            { word: "hour", meaning: "時間（1時間の間隔）" },
-            { word: "minute", meaning: "分" },
-            { word: "second", meaning: "秒" },
-            { word: "o'clock", meaning: "〜時" },
-            { word: "morning", meaning: "朝" },
-            { word: "afternoon", meaning: "午後" },
-            { word: "evening", meaning: "夕方・晩" },
-            { word: "night", meaning: "夜" },
-            { word: "day", meaning: "日" },
-            { word: "week", meaning: "週" },
-            { word: "month", meaning: "月（1か月間など）" },
-            { word: "year", meaning: "年" },
-            { word: "today", meaning: "今日" },
-            { word: "yesterday", meaning: "昨日" },
-            { word: "tomorrow", meaning: "明日" },
-            { word: "now", meaning: "今" },
-            { word: "always", meaning: "いつも" },
-            { word: "usually", meaning: "たいてい" },
-            { word: "often", meaning: "よく・しばしば" },
-            { word: "sometimes", meaning: "ときどき" }
+            { word: "first", meaning: "1番目の", otherwords: ["second", "third", "fourth"], othermeans: ["2番目の", "3番目の", "4番目の"] },
+            { word: "second", meaning: "2番目の", otherwords: ["first", "third", "fifth"], othermeans: ["1番目の", "3番目の", "5番目の"] },
+            { word: "third", meaning: "3番目の", otherwords: ["second", "fourth", "first"], othermeans: ["2番目の", "4番目の", "1番目の"] },
+            { word: "fourth", meaning: "4番目の", otherwords: ["third", "fifth", "second"], othermeans: ["3番目の", "5番目の", "2番目の"] },
+            { word: "fifth", meaning: "5番目の", otherwords: ["fourth", "first", "third"], othermeans: ["4番目の", "1番目の", "3番目の"] },
+            { word: "spring", meaning: "春", otherwords: ["summer", "autumn", "winter"], othermeans: ["夏", "秋", "冬"] },
+            { word: "summer", meaning: "夏", otherwords: ["spring", "autumn", "winter"], othermeans: ["春", "秋", "冬"] },
+            { word: "autumn", meaning: "秋", otherwords: ["spring", "summer", "winter"], othermeans: ["春", "夏", "冬"] },
+            { word: "fall", meaning: "秋", otherwords: ["spring", "summer", "winter"], othermeans: ["春", "夏", "冬"] },
+            { word: "winter", meaning: "冬", otherwords: ["spring", "summer", "autumn"], othermeans: ["春", "夏", "秋"] },
+            { word: "time", meaning: "時間・回", otherwords: ["hour", "minute", "second"], othermeans: ["時間（1時間の間隔）", "分", "秒"] },
+            { word: "hour", meaning: "時間（1時間の間隔）", otherwords: ["minute", "second", "time"], othermeans: ["分", "秒", "時間・回"] },
+            { word: "minute", meaning: "分", otherwords: ["hour", "second", "time"], othermeans: ["時間（1時間の間隔）", "秒", "時間・回"] },
+            { word: "second", meaning: "秒", otherwords: ["minute", "hour", "time"], othermeans: ["分", "時間（1時間の間隔）", "時間・回"] },
+            { word: "o'clock", meaning: "〜時", otherwords: ["hour", "minute", "time"], othermeans: ["時間（1時間の間隔）", "分", "時間・回"] },
+            { word: "morning", meaning: "朝", otherwords: ["afternoon", "evening", "night"], othermeans: ["午後", "夕方・晩", "夜"] },
+            { word: "afternoon", meaning: "午後", otherwords: ["morning", "evening", "night"], othermeans: ["朝", "夕方・晩", "夜"] },
+            { word: "evening", meaning: "夕方・晩", otherwords: ["morning", "afternoon", "night"], othermeans: ["朝", "午後", "夜"] },
+            { word: "night", meaning: "夜", otherwords: ["morning", "afternoon", "evening"], othermeans: ["朝", "午後", "夕方・晩"] },
+            { word: "day", meaning: "日", otherwords: ["week", "month", "year"], othermeans: ["週", "月（1か月間など）", "年"] },
+            { word: "week", meaning: "週", otherwords: ["day", "month", "year"], othermeans: ["日", "月（1か月間など）", "年"] },
+            { word: "month", meaning: "月（1か月間など）", otherwords: ["day", "week", "year"], othermeans: ["日", "週", "年"] },
+            { word: "year", meaning: "年", otherwords: ["day", "week", "month"], othermeans: ["日", "週", "月（1か月間など）"] },
+            { word: "today", meaning: "今日", otherwords: ["yesterday", "tomorrow", "now"], othermeans: ["昨日", "明日", "今"] },
+            { word: "yesterday", meaning: "昨日", otherwords: ["today", "tomorrow", "now"], othermeans: ["今日", "明日", "今"] },
+            { word: "tomorrow", meaning: "明日", otherwords: ["today", "yesterday", "now"], othermeans: ["今日", "昨日", "今"] },
+            { word: "now", meaning: "今", otherwords: ["always", "usually", "sometimes"], othermeans: ["いつも", "たいてい", "ときどき"] },
+            { word: "always", meaning: "いつも", otherwords: ["usually", "often", "sometimes"], othermeans: ["たいてい", "よく・しばしば", "ときどき"] },
+            { word: "usually", meaning: "たいてい", otherwords: ["always", "often", "sometimes"], othermeans: ["いつも", "よく・しばしば", "ときどき"] },
+            { word: "often", meaning: "よく・しばしば", otherwords: ["always", "usually", "sometimes"], othermeans: ["いつも", "たいてい", "ときどき"] },
+            { word: "sometimes", meaning: "ときどき", otherwords: ["always", "usually", "often"], othermeans: ["いつも", "たいてい", "よく・しばしば"] }
         ],
         interests: [
-            { word: "sport", meaning: "スポーツ" },
-            { word: "baseball", meaning: "野球" },
-            { word: "soccer", meaning: "サッカー" },
-            { word: "tennis", meaning: "テニス" },
-            { word: "basketball", meaning: "バスケットボール" },
-            { word: "volleyball", meaning: "バレーボール" },
-            { word: "swimming", meaning: "水泳" },
-            { word: "running", meaning: "ランニング" },
-            { word: "music", meaning: "音楽" },
-            { word: "piano", meaning: "ピアノ" },
-            { word: "guitar", meaning: "ギター" },
-            { word: "song", meaning: "歌" },
-            { word: "game", meaning: "ゲーム" },
-            { word: "movie", meaning: "映画" },
-            { word: "book", meaning: "本" },
-            { word: "subject", meaning: "教科" },
-            { word: "English", meaning: "英語" },
-            { word: "Japanese", meaning: "国語・日本語" },
-            { word: "math", meaning: "数学" },
-            { word: "science", meaning: "理科" },
-            { word: "social studies", meaning: "社会科" },
-            { word: "art", meaning: "美術・芸術" },
-            { word: "PE", meaning: "体育" }
+            { word: "sport", meaning: "スポーツ", otherwords: ["hobby", "game", "subject"], othermeans: ["趣味", "ゲーム", "教科・科目"] },
+            { word: "baseball", meaning: "野球", otherwords: ["soccer", "tennis", "basketball"], othermeans: ["サッカー", "テニス", "バスケットボール"] },
+            { word: "soccer", meaning: "サッカー", otherwords: ["baseball", "tennis", "volleyball"], othermeans: ["野球", "テニス", "バレーボール"] },
+            { word: "tennis", meaning: "テニス", otherwords: ["baseball", "soccer", "basketball"], othermeans: ["野球", "サッカー", "バスケットボール"] },
+            { word: "basketball", meaning: "バスケットボール", otherwords: ["volleyball", "soccer", "tennis"], othermeans: ["バレーボール", "サッカー", "テニス"] },
+            { word: "volleyball", meaning: "バレーボール", otherwords: ["basketball", "soccer", "swimming"], othermeans: ["バスケットボール", "サッカー", "水泳"] },
+            { word: "swimming", meaning: "水泳", otherwords: ["running", "soccer", "tennis"], othermeans: ["走ること・ランニング", "サッカー", "テニス"] },
+            { word: "running", meaning: "走ること・ランニング", otherwords: ["swimming", "soccer", "baseball"], othermeans: ["水泳", "サッカー", "野球"] },
+            { word: "hobby", meaning: "趣味", otherwords: ["sport", "game", "music"], othermeans: ["スポーツ", "ゲーム", "音楽"] },
+            { word: "music", meaning: "音楽", otherwords: ["song", "piano", "guitar"], othermeans: ["歌", "ピアノ", "ギター"] },
+            { word: "song", meaning: "歌", otherwords: ["music", "piano", "movie"], othermeans: ["音楽", "ピアノ", "映画"] },
+            { word: "piano", meaning: "ピアノ", otherwords: ["guitar", "music", "song"], othermeans: ["ギター", "音楽", "歌"] },
+            { word: "guitar", meaning: "ギター", otherwords: ["piano", "music", "song"], othermeans: ["ピアノ", "音楽", "歌"] },
+            { word: "game", meaning: "ゲーム", otherwords: ["hobby", "movie", "book"], othermeans: ["趣味", "映画", "本"] },
+            { word: "book", meaning: "本", otherwords: ["movie", "game", "music"], othermeans: ["映画", "ゲーム", "音楽"] },
+            { word: "movie", meaning: "映画", otherwords: ["book", "game", "song"], othermeans: ["本", "ゲーム", "歌"] },
+            { word: "subject", meaning: "教科・科目", otherwords: ["sport", "hobby", "school"], othermeans: ["スポーツ", "趣味", "学校"] },
+            { word: "English", meaning: "英語", otherwords: ["Japanese", "math", "science"], othermeans: ["国語・日本語", "数学", "理科・科学"] },
+            { word: "Japanese", meaning: "国語・日本語", otherwords: ["English", "math", "social studies"], othermeans: ["英語", "数学", "社会"] },
+            { word: "math", meaning: "数学", otherwords: ["science", "social studies", "art"], othermeans: ["理科・科学", "社会", "美術・芸術"] },
+            { word: "science", meaning: "理科・科学", otherwords: ["math", "social studies", "art"], othermeans: ["数学", "社会", "美術・芸術"] },
+            { word: "social studies", meaning: "社会", otherwords: ["history", "science", "math"], othermeans: ["歴史", "理科・科学", "数学"] },
+            { word: "history", meaning: "歴史", otherwords: ["social studies", "math", "art"], othermeans: ["社会", "数学", "美術・芸術"] },
+            { word: "art", meaning: "美術・芸術", otherwords: ["music", "science", "history"], othermeans: ["音楽", "理科・科学", "歴史"] }
         ],
         feelings: [
-            { word: "hello", meaning: "こんにちは" },
-            { word: "hi", meaning: "やあ" },
-            { word: "good morning", meaning: "おはよう" },
-            { word: "goodbye", meaning: "さようなら" },
-            { word: "bye", meaning: "じゃあね" },
-            { word: "please", meaning: "どうぞ・お願いします" },
-            { word: "thanks", meaning: "ありがとう" },
-            { word: "welcome", meaning: "ようこそ" },
-            { word: "happy", meaning: "幸せな・嬉しい" },
-            { word: "sad", meaning: "悲しい" },
-            { word: "angry", meaning: "怒った" },
-            { word: "tired", meaning: "疲れた" },
-            { word: "hungry", meaning: "お腹が空いた" },
-            { word: "thirsty", meaning: "のどが渇いた" },
-            { word: "fine", meaning: "元気な" },
-            { word: "sick", meaning: "病気の" },
-            { word: "sorry", meaning: "申し訳なく思って" }
+            { word: "hello", meaning: "こんにちは", otherwords: ["good morning", "goodbye", "bye"], othermeans: ["おはよう", "さようなら", "じゃあね"] },
+            { word: "good morning", meaning: "おはよう", otherwords: ["hello", "goodbye", "thanks"], othermeans: ["こんにちは", "さようなら", "ありがとう"] },
+            { word: "goodbye", meaning: "さようなら", otherwords: ["hello", "bye", "please"], othermeans: ["こんにちは", "じゃあね", "どうぞ・お願いします"] },
+            { word: "bye", meaning: "じゃあね", otherwords: ["hello", "goodbye", "thanks"], othermeans: ["こんにちは", "さようなら", "ありがとう"] },
+            { word: "please", meaning: "どうぞ・お願いします", otherwords: ["thanks", "welcome", "sorry"], othermeans: ["ありがとう", "ようこそ", "申し訳なく思って"] },
+            { word: "thanks", meaning: "ありがとう", otherwords: ["please", "welcome", "sorry"], othermeans: ["どうぞ・お願いします", "ようこそ", "申し訳なく思って"] },
+            { word: "welcome", meaning: "ようこそ", otherwords: ["please", "thanks", "hello"], othermeans: ["どうぞ・お願いします", "ありがとう", "こんにちは"] },
+            { word: "happy", meaning: "幸せな・嬉しい", otherwords: ["sad", "angry", "tired"], othermeans: ["悲しい", "怒った", "疲れた"] },
+            { word: "sad", meaning: "悲しい", otherwords: ["happy", "angry", "fine"], othermeans: ["幸せな・嬉しい", "怒った", "元気な"] },
+            { word: "angry", meaning: "怒った", otherwords: ["sad", "tired", "hungry"], othermeans: ["悲しい", "疲れた", "お腹が空いた"] },
+            { word: "tired", meaning: "疲れた", otherwords: ["hungry", "thirsty", "sick"], othermeans: ["お腹が空いた", "のどが渇いた", "病気の"] },
+            { word: "hungry", meaning: "お腹が空いた", otherwords: ["thirsty", "tired", "fine"], othermeans: ["のどが渇いた", "疲れた", "元気な"] },
+            { word: "thirsty", meaning: "のどが渇いた", otherwords: ["hungry", "tired", "sick"], othermeans: ["お腹が空いた", "疲れた", "病気の"] },
+            { word: "fine", meaning: "元気な", otherwords: ["sick", "tired", "sad"], othermeans: ["病気の", "疲れた", "悲しい"] },
+            { word: "sick", meaning: "病気の", otherwords: ["fine", "tired", "thirsty"], othermeans: ["元気な", "疲れた", "のどが渇いた"] },
+            { word: "sorry", meaning: "申し訳なく思って", otherwords: ["please", "thanks", "fine"], othermeans: ["どうぞ・お願いします", "ありがとう", "元気な"] }
         ],
-
-        // ステップ2：基本文法期
         pronouns: [
-            { word: "I", meaning: "私は" },
-            { word: "my", meaning: "私の" },
-            { word: "mine", meaning: "私のもの" },
-            { word: "you", meaning: "あなたは・あなたがたは" },
-            { word: "your", meaning: "あなたの・あなたがたの" },
-            { word: "yours", meaning: "あなたのもの" },
-            { word: "he", meaning: "彼は" },
-            { word: "his", meaning: "彼の・彼のもの" },
-            { word: "she", meaning: "彼女は" },
-            { word: "her", meaning: "彼女の" },
-            { word: "it", meaning: "それは" },
-            { word: "its", meaning: "それの" },
-            { word: "we", meaning: "私たちは" },
-            { word: "our", meaning: "私たちの" },
-            { word: "ours", meaning: "私たちのもの" },
-            { word: "they", meaning: "彼らは・それらは" },
-            { word: "their", meaning: "彼らの・それらの" },
-            { word: "theirs", meaning: "彼らのもの" },
-            { word: "this", meaning: "これ・この" },
-            { word: "that", meaning: "あれ・あの" },
-            { word: "these", meaning: "これら・こちらの" },
-            { word: "those", meaning: "あれら・あちらの" }
+            { word: "I", meaning: "私は", otherwords: ["my", "mine", "me"], othermeans: ["私の", "私のもの", "私を・私に"] },
+            { word: "my", meaning: "私の", otherwords: ["I", "mine", "you"], othermeans: ["私は", "私のもの", "あなたは・あなたがたは"] },
+            { word: "mine", meaning: "私のもの", otherwords: ["my", "I", "yours"], othermeans: ["私の", "私は", "あなたのもの"] },
+            { word: "you", meaning: "あなたは・あなたがたは", otherwords: ["your", "yours", "I"], othermeans: ["あなたの・あなたがたの", "あなたのもの", "私は"] },
+            { word: "your", meaning: "あなたの・あなたがたの", otherwords: ["you", "yours", "my"], othermeans: ["あなたは・あなたがたは", "あなたのもの", "私の"] },
+            { word: "yours", meaning: "あなたのもの", otherwords: ["your", "you", "mine"], othermeans: ["あなたの・あなたがたの", "あなたは・あなたがたは", "私のもの"] },
+            { word: "he", meaning: "彼は", otherwords: ["his", "him", "she"], othermeans: ["彼の・彼のもの", "彼を・彼に", "彼女は"] },
+            { word: "his", meaning: "彼の・彼のもの", otherwords: ["he", "him", "her"], othermeans: ["彼は", "彼を・彼に", "彼女の"] },
+            { word: "she", meaning: "彼女は", otherwords: ["her", "he", "it"], othermeans: ["彼女の", "彼は", "それは"] },
+            { word: "her", meaning: "彼女の", otherwords: ["she", "hers", "his"], othermeans: ["彼女は", "彼女のもの", "彼の・彼のもの"] },
+            { word: "it", meaning: "それは", otherwords: ["its", "this", "that"], othermeans: ["それの", "これ・この", "あれ・あの"] },
+            { word: "its", meaning: "それの", otherwords: ["it", "this", "that"], othermeans: ["それは", "これ・この", "あれ・あの"] },
+            { word: "we", meaning: "私たちは", otherwords: ["our", "ours", "us"], othermeans: ["私たちの", "私たちのもの", "私たちを・私たちに"] },
+            { word: "our", meaning: "私たちの", otherwords: ["we", "ours", "their"], othermeans: ["私たちは", "私たちのもの", "彼らの・それらの"] },
+            { word: "ours", meaning: "私たちのもの", otherwords: ["our", "we", "theirs"], othermeans: ["私たちの", "私たちは", "彼らのもの"] },
+            { word: "they", meaning: "彼らは・それらは", otherwords: ["their", "theirs", "them"], othermeans: ["彼らの・それらの", "彼らのもの", "彼らを・彼らに・それらを・それらに"] },
+            { word: "their", meaning: "彼らの・それらの", otherwords: ["they", "theirs", "our"], othermeans: ["彼らは・それらは", "彼らのもの", "私たちの"] },
+            { word: "theirs", meaning: "彼らのもの", otherwords: ["their", "they", "ours"], othermeans: ["彼らの・それらの", "彼らは・それらは", "私たちのもの"] },
+            { word: "this", meaning: "これ・この", otherwords: ["that", "it", "its"], othermeans: ["あれ・あの", "それは", "それの"] },
+            { word: "that", meaning: "あれ・あの", otherwords: ["this", "it", "its"], othermeans: ["これ・この", "それは", "それの"] }
         ],
         verbs: [
-            { word: "am", meaning: "〜です・ある" },
-            { word: "are", meaning: "〜です・ある" },
-            { word: "is", meaning: "〜です・ある" }
+            { word: "am", meaning: "〜である・いる（Iが主語）", otherwords: ["is", "are", "be"], othermeans: ["〜である・いる（三人称単数が主語）", "〜である・いる（youや複数が主語）", "〜である・いる（原形）"] },
+            { word: "is", meaning: "〜である・いる（三人称単数が主語）", otherwords: ["am", "are", "be"], othermeans: ["〜である・いる（Iが主語）", "〜である・いる（youや複数が主語）", "〜である・いる（原形）"] },
+            { word: "are", meaning: "〜である・いる（youや複数が主語）", otherwords: ["am", "is", "be"], othermeans: ["〜である・いる（Iが主語）", "〜である・いる（三人称単数が主語）", "〜である・いる（原形）"] },
+            { word: "be", meaning: "〜である・いる（原形）", otherwords: ["am", "is", "are"], othermeans: ["〜である・いる（Iが主語）", "〜である・いる（三人称単数が主語）", "〜である・いる（youや複数が主語）"] }
         ],
         actions: [
-            { word: "play", meaning: "遊ぶ・（スポーツや楽器を）する" },
-            { word: "like", meaning: "好む" },
-            { word: "have", meaning: "持っている・食べる" },
-            { word: "study", meaning: "勉強する" },
-            { word: "want", meaning: "欲しい" },
-            { word: "speak", meaning: "話す（言語を）" },
-            { word: "talk", meaning: "しゃべる・対談する" },
-            { word: "say", meaning: "言う" },
-            { word: "tell", meaning: "伝える・教える" },
-            { word: "write", meaning: "書く" },
-            { word: "read", meaning: "読む" },
-            { word: "listen", meaning: "聴く・耳を傾ける" },
-            { word: "look", meaning: "見る（視線を向ける）" },
-            { word: "see", meaning: "見える・会う" },
-            { word: "watch", meaning: "じっと見る（テレビ等）" },
-            { word: "know", meaning: "知っている" },
-            { word: "think", meaning: "思う・考える" },
-            { word: "understand", meaning: "理解する" },
-            { word: "go", meaning: "行く" },
-            { word: "come", meaning: "来る" },
-            { word: "run", meaning: "走る" },
-            { word: "walk", meaning: "歩く" },
-            { word: "swim", meaning: "泳ぐ" },
-            { word: "eat", meaning: "食べる" },
-            { word: "drink", meaning: "飲む" },
-            { word: "cook", meaning: "料理する" },
-            { word: "make", meaning: "作る" },
-            { word: "buy", meaning: "買う" },
-            { word: "sell", meaning: "売る" },
-            { word: "use", meaning: "使う" },
-            { word: "open", meaning: "開ける" },
-            { word: "close", meaning: "閉める" },
-            { word: "wash", meaning: "洗う" },
-            { word: "clean", meaning: "掃除する" },
-            { word: "help", meaning: "手伝う" },
-            { word: "meet", meaning: "会う" },
-            { word: "live", meaning: "住む・生きる" },
-            { word: "work", meaning: "働く・作業する" },
-            { word: "love", meaning: "愛する・大好きである" }
+            { word: "go", meaning: "行く", otherwords: ["come", "run", "walk"], othermeans: ["来る", "走る", "歩く"] },
+            { word: "come", meaning: "来る", otherwords: ["go", "run", "walk"], othermeans: ["行く", "走る", "歩く"] },
+            { word: "run", meaning: "走る", otherwords: ["walk", "swim", "go"], othermeans: ["歩く", "泳ぐ", "行く"] },
+            { word: "walk", meaning: "歩く", otherwords: ["run", "swim", "come"], othermeans: ["走る", "泳ぐ", "来る"] },
+            { word: "swim", meaning: "泳ぐ", otherwords: ["run", "walk", "wash"], othermeans: ["走る", "歩く", "洗う"] },
+            { word: "eat", meaning: "食べる", otherwords: ["drink", "cook", "make"], othermeans: ["飲む", "料理する", "作る"] },
+            { word: "drink", meaning: "飲む", otherwords: ["eat", "cook", "make"], othermeans: ["食べる", "料理する", "作る"] },
+            { word: "cook", meaning: "料理する", otherwords: ["make", "eat", "buy"], othermeans: ["作る", "食べる", "買う"] },
+            { word: "make", meaning: "作る", otherwords: ["cook", "buy", "use"], othermeans: ["料理する", "買う", "使う"] },
+            { word: "buy", meaning: "買う", otherwords: ["sell", "use", "make"], othermeans: ["売る", "使う", "作る"] },
+            { word: "sell", meaning: "売る", otherwords: ["buy", "use", "make"], othermeans: ["買う", "使う", "作る"] },
+            { word: "use", meaning: "使う", otherwords: ["make", "buy", "open"], othermeans: ["作る", "買う", "開ける"] },
+            { word: "open", meaning: "開ける", otherwords: ["close", "wash", "clean"], othermeans: ["閉める", "洗う", "掃除する"] },
+            { word: "close", meaning: "閉める", otherwords: ["open", "wash", "clean"], othermeans: ["開ける", "洗う", "掃除する"] },
+            { word: "wash", meaning: "洗う", otherwords: ["clean", "open", "close"], othermeans: ["掃除する", "開ける", "閉める"] },
+            { word: "clean", meaning: "掃除する", otherwords: ["wash", "help", "work"], othermeans: ["洗う", "手伝う", "働く・作業する"] },
+            { word: "help", meaning: "手伝う", otherwords: ["meet", "work", "clean"], othermeans: ["会う", "働く・作業する", "掃除する"] },
+            { word: "meet", meaning: "会う", otherwords: ["help", "live", "work"], othermeans: ["手伝う", "住む・生きる", "働く・作業する"] },
+            { word: "live", meaning: "住む・生きる", otherwords: ["work", "meet", "help"], othermeans: ["働く・作業する", "会う", "手伝う"] },
+            { word: "work", meaning: "働く・作業する", otherwords: ["live", "help", "meet"], othermeans: ["住む・生きる", "手伝う", "会う"] },
+            { word: "love", meaning: "愛する・大好きである", otherwords: ["like", "want", "help"], othermeans: ["好む", "欲しい", "手伝う"] }
         ],
-
-        // ステップ3：表現の拡大期
         descriptions: [
-            { word: "big", meaning: "大きい" },
-            { word: "small", meaning: "小さい" },
-            { word: "large", meaning: "広い・大きい" },
-            { word: "little", meaning: "小さい・少しの" },
-            { word: "new", meaning: "新しい" },
-            { word: "old", meaning: "古い・年老いた" },
-            { word: "young", meaning: "若い" },
-            { word: "good", meaning: "良い" },
-            { word: "bad", meaning: "悪い" },
-            { word: "great", meaning: "素晴らしい・重大な" },
-            { word: "wonderful", meaning: "素敵な・素晴らしい" },
-            { word: "nice", meaning: "良い・親切な" },
-            { word: "beautiful", meaning: "美しい" },
-            { word: "pretty", meaning: "可愛い" },
-            { word: "cute", meaning: "可愛い" },
-            { word: "long", meaning: "長い" },
-            { word: "short", meaning: "短い・背が低い" },
-            { word: "tall", meaning: "背が高い" },
-            { word: "high", meaning: "高い" },
-            { word: "low", meaning: "低い" },
-            { word: "hot", meaning: "熱い・暑い" },
-            { word: "warm", meaning: "暖かい" },
-            { word: "cool", meaning: "涼しい・かっこいい" },
-            { word: "cold", meaning: "冷たい・寒い" },
-            { word: "busy", meaning: "忙しい" },
-            { word: "free", meaning: "暇な・自由な・無料の" },
-            { word: "easy", meaning: "簡単な" },
-            { word: "difficult", meaning: "難しい" },
-            { word: "hard", meaning: "難しい・硬い・熱心な" },
-            { word: "important", meaning: "重要な" },
-            { word: "favorite", meaning: "お気に入りの" },
-            { word: "popular", meaning: "人気のある" },
-            { word: "famous", meaning: "有名な" },
-            { word: "rich", meaning: "豊かな・金持ちの" },
-            { word: "poor", meaning: "貧しい・かわいそうな" },
-            { word: "fast", meaning: "速い" },
-            { word: "slow", meaning: "遅い" },
-            { word: "early", meaning: "早い" },
-            { word: "late", meaning: "遅い・遅れて" },
-            { word: "many", meaning: "たくさんの（数えられる名詞に）" },
-            { word: "much", meaning: "たくさんの（数えられない名詞に）" },
-            { word: "some", meaning: "いくつかの（肯定文で使用）" },
-            { word: "any", meaning: "いくつかの（疑問・否定文で使用）" },
-            { word: "all", meaning: "すべての" },
-            { word: "every", meaning: "すべての・毎〜" }
+            { word: "big", meaning: "大きい", otherwords: ["small", "large", "little"], othermeans: ["小さい", "広い・大きい", "小さい・少しの"] },
+            { word: "small", meaning: "小さい", otherwords: ["big", "large", "little"], othermeans: ["大きい", "広い・大きい", "小さい・少しの"] },
+            { word: "large", meaning: "広い・大きい", otherwords: ["small", "little", "big"], othermeans: ["小さい", "小さい・少しの", "大きい"] },
+            { word: "little", meaning: "小さい・少しの", otherwords: ["big", "small", "large"], othermeans: ["大きい", "小さい", "広い・大きい"] },
+            { word: "new", meaning: "新しい", otherwords: ["old", "young", "good"], othermeans: ["古い・年老いた", "若い", "良い"] },
+            { word: "old", meaning: "古い・年老いた", otherwords: ["new", "young", "bad"], othermeans: ["新しい", "若い", "悪い"] },
+            { word: "young", meaning: "若い", otherwords: ["old", "new", "beautiful"], othermeans: ["古い・年老いた", "新しい", "美しい"] },
+            { word: "good", meaning: "良い", otherwords: ["bad", "great", "nice"], othermeans: ["悪い", "素晴らしい・重大な", "良い・親切な"] },
+            { word: "bad", meaning: "悪い", otherwords: ["good", "great", "nice"], othermeans: ["良い", "素晴らしい・重大な", "良い・親切な"] },
+            { word: "great", meaning: "素晴らしい・重大な", otherwords: ["wonderful", "good", "bad"], othermeans: ["素敵な・素晴らしい", "良い", "悪い"] },
+            { word: "wonderful", meaning: "素敵な・素晴らしい", otherwords: ["great", "nice", "beautiful"], othermeans: ["素晴らしい・重大な", "良い・親切な", "美しい"] },
+            { word: "nice", meaning: "良い・親切な", otherwords: ["good", "bad", "wonderful"], othermeans: ["良い", "悪い", "素敵な・素晴らしい"] },
+            { word: "beautiful", meaning: "美しい", otherwords: ["pretty", "cute", "nice"], othermeans: ["可愛い", "可愛い", "良い・親切な"] },
+            { word: "pretty", meaning: "可愛い", otherwords: ["beautiful", "cute", "long"], othermeans: ["美しい", "可愛い", "長い"] },
+            { word: "cute", meaning: "可愛い", otherwords: ["beautiful", "pretty", "short"], othermeans: ["美しい", "可愛い", "短い・背の低い"] },
+            { word: "long", meaning: "長い", otherwords: ["short", "tall", "high"], othermeans: ["短い・背の低い", "背の高い", "高い"] },
+            { word: "short", meaning: "短い・背の低い", otherwords: ["long", "tall", "high"], othermeans: ["長い", "背の高い", "高い"] },
+            { word: "tall", meaning: "背の高い", otherwords: ["short", "long", "high"], othermeans: ["短い・背の低い", "長い", "高い"] },
+            { word: "high", meaning: "高い", otherwords: ["low", "tall", "short"], othermeans: ["低い", "背の高い", "短い・背の低い"] },
+            { word: "low", meaning: "低い", otherwords: ["high", "tall", "short"], othermeans: ["高い", "背の高い", "短い・背の低い"] },
+            { word: "hot", meaning: "熱い・暑い", otherwords: ["cold", "warm", "cool"], othermeans: ["冷たい・寒い", "暖かい・温かい", "涼しい・格好いい"] },
+            { word: "cold", meaning: "冷たい・寒い", otherwords: ["hot", "warm", "cool"], othermeans: ["熱い・暑い", "暖かい・温かい", "涼しい・格好いい"] },
+            { word: "warm", meaning: "暖かい・温かい", otherwords: ["cool", "hot", "cold"], othermeans: ["涼しい・格好いい", "熱い・暑い", "冷たい・寒い"] },
+            { word: "cool", meaning: "涼しい・格好いい", otherwords: ["warm", "hot", "cold"], othermeans: ["暖かい・温かい", "熱い・暑い", "冷たい・寒い"] },
+            { word: "busy", meaning: "忙しい", otherwords: ["free", "early", "late"], othermeans: ["暇な・自由な", "早い・早く", "遅い・遅れて"] },
+            { word: "free", meaning: "暇な・自由な", otherwords: ["busy", "early", "late"], othermeans: ["忙しい", "早い・早く", "遅い・遅れて"] },
+            { word: "early", meaning: "早い・早く", otherwords: ["late", "busy", "free"], othermeans: ["遅い・遅れて", "忙しい", "暇な・自由な"] },
+            { word: "late", meaning: "遅い・遅れて", otherwords: ["early", "busy", "free"], othermeans: ["早い・早く", "忙しい", "暇な・自由な"] },
+            { word: "many", meaning: "たくさんの（数えられる名詞に）", otherwords: ["much", "some", "any"], othermeans: ["たくさんの（数えられない名詞に）", "いくつかの（肯定文で使用）", "いくつかの（疑問・否定文で使用）"] },
+            { word: "much", meaning: "たくさんの（数えられない名詞に）", otherwords: ["many", "some", "any"], othermeans: ["たくさんの（数えられる名詞に）", "いくつかの（肯定文で使用）", "いくつかの（疑問・否定文で使用）"] },
+            { word: "some", meaning: "いくつかの（肯定文で使用）", otherwords: ["any", "many", "much"], othermeans: ["いくつかの（疑問・否定文で使用）", "たくさんの（数えられる名詞に）", "たくさんの（数えられない名詞に）"] },
+            { word: "any", meaning: "いくつかの（疑問・否定文で使用）", otherwords: ["some", "many", "much"], othermeans: ["いくつかの（肯定文で使用）", "たくさんの（数えられる名詞に）", "たくさんの（数えられない名詞に）"] },
+            { word: "all", meaning: "すべての", otherwords: ["every", "some", "any"], othermeans: ["すべての・毎〜", "いくつかの（肯定文で使用）", "いくつかの（疑問・否定文で使用）"] },
+            { word: "every", meaning: "すべての・毎〜", otherwords: ["all", "some", "any"], othermeans: ["すべての", "いくつかの（肯定文で使用）", "いくつかの（疑問・否定文で使用）"] }
         ],
         details: [
-            { word: "very", meaning: "とても" },
-            { word: "so", meaning: "とても・そのように" },
-            { word: "too", meaning: "〜もまた・あまりに〜すぎる" },
-            { word: "well", meaning: "上手に" },
-            { word: "hard", meaning: "一生懸命に" },
-            { word: "fast", meaning: "速く" },
-            { word: "slowly", meaning: "ゆっくりと" },
-            { word: "together", meaning: "一緒に" },
-            { word: "again", meaning: "もう一度" },
-            { word: "out", meaning: "外へ" },
-            { word: "home", meaning: "家に・家へ" },
-            { word: "here", meaning: "ここに・ここへ" },
-            { word: "there", meaning: "そこに・そこへ" }
+            { word: "very", meaning: "とても", otherwords: ["so", "too", "well"], othermeans: ["とても・そのように", "〜もまた・あまりに〜すぎる", "上手に"] },
+            { word: "so", meaning: "とても・そのように", otherwords: ["very", "too", "together"], othermeans: ["とても", "〜モまた・あまりに〜すぎる", "一緒に"] },
+            { word: "too", meaning: "〜もまた・あまりに〜すぎる", otherwords: ["very", "so", "well"], othermeans: ["とても", "とても・そのように", "上手に"] },
+            { word: "well", meaning: "上手に", otherwords: ["hard", "fast", "slowly"], othermeans: ["一生懸命に", "速く", "ゆっくりと"] },
+            { word: "hard", meaning: "一生懸命に", otherwords: ["well", "fast", "slowly"], othermeans: ["上手に", "速く", "ゆっくりと"] },
+            { word: "fast", meaning: "速く", otherwords: ["slowly", "well", "hard"], othermeans: ["ゆっくりと", "上手に", "一生懸命に"] },
+            { word: "slowly", meaning: "ゆっくりと", otherwords: ["fast", "well", "hard"], othermeans: ["速く", "上手に", "一生懸命に"] },
+            { word: "together", meaning: "一緒に", otherwords: ["again", "out", "home"], othermeans: ["もう一度", "外へ", "家に・家へ"] },
+            { word: "again", meaning: "もう一度", otherwords: ["together", "out", "here"], othermeans: ["一緒に", "外へ", "ここに・ここへ"] },
+            { word: "out", meaning: "外へ", otherwords: ["together", "home", "here"], othermeans: ["一緒に", "家に・家へ", "ここに・ここへ"] },
+            { word: "home", meaning: "家に・家へ", otherwords: ["here", "there", "out"], othermeans: ["ここに・ここへ", "そこに・そこへ", "外へ"] },
+            { word: "here", meaning: "ここに・ここへ", otherwords: ["there", "home", "out"], othermeans: ["そこに・そこへ", "家に・家へ", "外へ"] },
+            { word: "there", meaning: "そこに・そこへ", otherwords: ["here", "home", "out"], othermeans: ["ここに・ここへ", "家に・家へ", "外へ"] }
         ],
         positions: [
-            { word: "in", meaning: "〜の中に・〜に" },
-            { word: "on", meaning: "〜の上に・〜に（接触して）" },
-            { word: "under", meaning: "〜の下に" },
-            { word: "near", meaning: "〜の近くに" },
-            { word: "by", meaning: "〜のそばに・〜によって" },
-            { word: "at", meaning: "〜で・〜に（地点）" },
-            { word: "to", meaning: "〜へ・〜に" },
-            { word: "for", meaning: "〜のために・〜の間" },
-            { word: "from", meaning: "〜から" },
-            { word: "with", meaning: "〜と一緒に・〜を使って" },
-            { word: "about", meaning: "〜について・およそ" },
-            { word: "of", meaning: "〜の" },
-            { word: "before", meaning: "〜の前に" },
-            { word: "after", meaning: "〜の後に" }
+            { word: "in", meaning: "〜の中に・〜に", otherwords: ["on", "under", "near"], othermeans: ["〜の上に・〜に（接触して）", "〜の下に", "〜の近くに"] },
+            { word: "on", meaning: "〜の上に・〜に（接触して）", otherwords: ["in", "under", "near"], othermeans: ["〜の中に・〜に", "〜の下に", "〜の近くに"] },
+            { word: "under", meaning: "〜の下に", otherwords: ["in", "on", "near"], othermeans: ["〜の中に・〜に", "〜の上に・〜に（接触して）", "〜の近くに"] },
+            { word: "near", meaning: "〜の近くに", otherwords: ["by", "at", "under"], othermeans: ["〜のそばに・〜によって", "〜で・〜に（地点）", "〜の下に"] },
+            { word: "by", meaning: "〜のそばに・〜によって", otherwords: ["near", "at", "with"], othermeans: ["〜の近くに", "〜で・〜に（地点）", "〜と一緒に・〜を使って"] },
+            { word: "at", meaning: "〜で・〜に（地点）", otherwords: ["to", "in", "by"], othermeans: ["〜へ・〜に", "〜の中に・〜に", "〜のそばに・〜によって"] },
+            { word: "to", meaning: "〜へ・〜に", otherwords: ["at", "from", "for"], othermeans: ["〜で・〜に（地点）", "〜から", "〜のために・〜の間"] },
+            { word: "for", meaning: "〜のために・〜の間", otherwords: ["to", "from", "with"], othermeans: ["〜へ・〜に", "〜から", "〜と一緒に・〜を使って"] },
+            { word: "from", meaning: "〜から", otherwords: ["to", "for", "of"], othermeans: ["〜へ・〜に", "〜のために・〜の間", "〜の"] },
+            { word: "with", meaning: "〜と一緒に・〜を使って", otherwords: ["by", "for", "about"], othermeans: ["〜のそばに・〜によって", "〜のために・〜の間", "〜について・およそ"] },
+            { word: "about", meaning: "〜について・およそ", otherwords: ["with", "of", "before"], othermeans: ["〜と一緒に・〜を使って", "〜の", "〜の前に"] },
+            { word: "of", meaning: "〜の", otherwords: ["about", "from", "for"], othermeans: ["〜について・およそ", "〜から", "〜のために・〜の間"] },
+            { word: "before", meaning: "〜の前に", otherwords: ["after", "in", "under"], othermeans: ["〜の後に", "〜の中に・〜に", "〜の下に"] },
+            { word: "after", meaning: "〜の後に", otherwords: ["before", "in", "under"], othermeans: ["〜の前に", "〜の中に・〜に", "〜の下に"] }
         ],
         links: [
-            { word: "and", meaning: "〜と・そして" },
-            { word: "but", meaning: "しかし" },
-            { word: "or", meaning: "または" },
-            { word: "so", meaning: "だから" }
+            { word: "and", meaning: "〜と・そして", otherwords: ["but", "or", "so"], othermeans: ["しかし", "または", "だから"] },
+            { word: "but", meaning: "しかし", otherwords: ["and", "or", "so"], othermeans: ["〜と・そして", "または", "だから"] },
+            { word: "or", meaning: "または", otherwords: ["and", "but", "so"], othermeans: ["〜と・そして", "しかし", "だから"] },
+            { word: "so", meaning: "だから", otherwords: ["and", "but", "or"], othermeans: ["〜と・そして", "しかし", "または"] }
         ],
         helpers: [
-            { word: "can", meaning: "〜できる・〜してもよい" }
+            { word: "can", meaning: "〜できる・〜してもよい", otherwords: ["do", "will", "may"], othermeans: ["〜する", "〜するつもりだ", "〜かもしれない"] }
         ],
-
-        // ステップ4：応用・展開期
         questions: [
-            { word: "what", meaning: "何" },
-            { word: "who", meaning: "誰" },
-            { word: "whose", meaning: "だれの" },
-            { word: "when", meaning: "いつ" },
-            { word: "where", meaning: "どこ" },
-            { word: "how", meaning: "どのように・どうやって" },
-            { word: "why", meaning: "なぜ" },
-            { word: "which", meaning: "どちら" }
+            { word: "what", meaning: "何", otherwords: ["who", "where", "when"], othermeans: ["誰", "どこ", "いつ"] },
+            { word: "who", meaning: "誰", otherwords: ["what", "whose", "why"], othermeans: ["何", "誰の・誰のもの", "なぜ"] },
+            { word: "whose", meaning: "誰の・誰のもの", otherwords: ["who", "what", "how"], othermeans: ["誰", "何", "どのように・どうやって"] },
+            { word: "where", meaning: "どこ", otherwords: ["when", "why", "what"], othermeans: ["いつ", "なぜ", "何"] },
+            { word: "when", meaning: "いつ", otherwords: ["where", "why", "who"], othermeans: ["どこ", "なぜ", "誰"] },
+            { word: "why", meaning: "なぜ", otherwords: ["when", "where", "how"], othermeans: ["いつ", "どこ", "どのように・どうやって"] },
+            { word: "how", meaning: "どのように・どうやって", otherwords: ["why", "what", "who"], othermeans: ["なぜ", "何", "誰"] }
         ],
         objects: [
-            { word: "me", meaning: "私を・私に" },
-            { word: "you", meaning: "あなたを・あなたに" },
-            { word: "him", meaning: "彼を・彼に" },
-            { word: "her", meaning: "彼女を・彼女に" },
-            { word: "it", meaning: "それを・それに" },
-            { word: "us", meaning: "私たちを・私たちに" },
-            { word: "them", meaning: "彼らを・彼らに、それらを・それに" }
+            { word: "me", meaning: "私を・私に", otherwords: ["you", "him", "us"], othermeans: ["あなたを・あなたに", "彼を・彼に", "私たちを・私たちに"] },
+            { word: "you", meaning: "あなたを・あなたに", otherwords: ["me", "him", "them"], othermeans: ["私を・私に", "彼を・彼に", "彼らを・彼らに・それらを・それらに"] },
+            { word: "him", meaning: "彼を・彼に", otherwords: ["her", "it", "them"], othermeans: ["彼女を・彼女に", "それを・それに", "彼らを・彼らに・それらを・それらに"] },
+            { word: "her", meaning: "彼女を・彼女に", otherwords: ["him", "it", "them"], othermeans: ["彼を・彼に", "それを・それに", "彼らを・彼らに・それらを・それらに"] },
+            { word: "it", meaning: "それを・それに", otherwords: ["him", "her", "them"], othermeans: ["彼を・彼に", "彼女を・彼女に", "彼らを・彼らに・それらを・それらに"] },
+            { word: "us", meaning: "私たちを・私たちに", otherwords: ["them", "me", "you"], othermeans: ["彼らを・彼らに・それらを・それらに", "私を・私に", "あなたを・あなたに"] },
+            { word: "them", meaning: "彼らを・彼らに・それらを・それらに", otherwords: ["us", "him", "her"], othermeans: ["私たちを・私たちに", "彼を・彼に", "彼女を・彼女に"] }
         ],
         singulars: [
-            { word: "plays", meaning: "（playの三人称単数現在形）" },
-            { word: "likes", meaning: "（likeの三人称単数現在形）" },
-            { word: "studies", meaning: "（studyの三人称単数現在形）" },
-            { word: "teaches", meaning: "（teachの三人称単数現在形）" },
-            { word: "has", meaning: "（haveの三人称単数現在形）" },
-            { word: "does", meaning: "（doの三人称単数現在形）" },
-            { word: "goes", meaning: "（goの三人称単数現在形）" }
+            { word: "plays", meaning: "（playの三人称単数現在形）", otherwords: ["likes", "wants", "goes"], othermeans: ["（likeの三人称単数現在形）", "（wantの三人称単数現在形）", "（goの三人称単数現在形）"] },
+            { word: "likes", meaning: "（likeの三人称単数現在形）", otherwords: ["plays", "wants", "has"], othermeans: ["（playの三人称単数現在形）", "（wantの三人称単数現在形）", "（haveの三人称単数現在形）"] },
+            { word: "wants", meaning: "（wantの三人称単数現在形）", otherwords: ["likes", "studies", "does"], othermeans: ["（likeの三人称単数現在形）", "（studyの三人称単数現在形）", "（doの三人称単数現在形）"] },
+            { word: "studies", meaning: "（studyの三人称単数現在形）", otherwords: ["teaches", "plays", "goes"], othermeans: ["（teachの三人称単数現在形）", "（playの三人称単数現在形）", "（goの三人称単数現在形）"] },
+            { word: "teaches", meaning: "（teachの三人称単数現在形）", otherwords: ["studies", "watches", "plays"], othermeans: ["（studyの三人称単数現在形）", "（watchの三人称単数現在形）", "（playの三人称単数現在形）"] },
+            { word: "watches", meaning: "（watchの三人称単数現在形）", otherwords: ["teaches", "washes", "goes"], othermeans: ["（teachの三人称単数現在形）", "（washの三人称単数現在形）", "（goの三人称単数現在形）"] },
+            { word: "washes", meaning: "（washの三人称単数現在形）", otherwords: ["watches", "goes", "does"], othermeans: ["（watchの三人称単数現在形）", "（goの三人称単数現在形）", "（doの三人称単数現在形）"] },
+            { word: "goes", meaning: "（goの三人称単数現在形）", otherwords: ["does", "has", "plays"], othermeans: ["（doの三人称単数現在形）", "（have의三人称単数現在形）", "（playの三人称単数現在形）"] },
+            { word: "does", meaning: "（doの三人称単数現在形）", otherwords: ["goes", "has", "studies"], othermeans: ["（goの三人称単数現在形）", "（haveの三人称単数現在形）", "（studyの三人称単数現在形）"] },
+            { word: "has", meaning: "（haveの三人称単数現在形）", otherwords: ["does", "goes", "likes"], othermeans: ["（doの三人称単数現在形）", "（goの三人称単数現在形）", "（likeの三人称単数現在形）"] }
         ],
         past: [
-            // be動詞の過去形
-            { word: "was", meaning: "〜だった・あった（am, isの過去形）" },
-            { word: "were", meaning: "〜だった・あった（areの過去形）" },
-            // 一般動詞の過去形（規則変化）
-            { word: "played", meaning: "遊んだ・演奏した（playの過去形）" },
-            { word: "liked", meaning: "好んだ・気に入った（likeの過去形）" },
-            { word: "studied", meaning: "勉強した（studyの過去形）" },
-            { word: "wanted", meaning: "欲しかった（wantの過去形）" },
-            { word: "visited", meaning: "訪れた（visitの過去形）" },
-            { word: "started", meaning: "始めた・出発した（startの過去形）" },
-            { word: "cooked", meaning: "料理した（cookの過去形）" },
-            { word: "washed", meaning: "洗った（washの過去形）" },
-            // 一般動詞の過去形（不規則変化）
-            { word: "went", meaning: "行った（goの過去形）" },
-            { word: "came", meaning: "来た（comeの過去形）" },
-            { word: "had", meaning: "持っていた・食べた（haveの過去形）" },
-            { word: "made", meaning: "作った（makeの過去形）" },
-            { word: "ate", meaning: "食べた（eatの過去形）" },
-            { word: "drank", meaning: "飲んだ（drinkの過去形）" },
-            { word: "saw", meaning: "見える・会った（seeの過去形）" },
-            { word: "read", meaning: "読んだ（readの過去形 ※発音はred）" },
-            { word: "wrote", meaning: "書いた（writeの過去形）" },
-            { word: "took", meaning: "連れて行った・手に取った（takeの過去形）" },
-            { word: "got", meaning: "手に入れた・〜になった（getの過去形）" },
-            { word: "bought", meaning: "買った（buyの過去形）" },
-            { word: "met", meaning: "会った（meetの過去形）" },
-            { word: "spoke", meaning: "話した（speakの過去形）" },
-            { word: "said", meaning: "言った（sayの過去形）" },
-            { word: "did", meaning: "〜した（doの過去形）" }
-        ],
-
-        //地理
-        europe: [
-            { meaning: "ウィーン",       imgFile: "./europe/austria.png",   countryName: "オーストリア" },
-            { meaning: "ブリュッセル",   imgFile: "./europe/Belgium.png",   countryName: "ベルギー" },
-            { meaning: "プラハ",         imgFile: "./europe/czechia.png",   countryName: "チェコ" },
-            { meaning: "コペンハーゲン", imgFile: "./europe/denmark.png",   countryName: "デンマーク" },
-            { meaning: "ヘルシンキ",     imgFile: "./europe/finland.png",   countryName: "フィンランド" },
-            { meaning: "パリ",           imgFile: "./europe/france.png",    countryName: "フランス" },
-            { meaning: "ベルリン",       imgFile: "./europe/germany.png",   countryName: "ドイツ" },
-            { meaning: "アテネ",         imgFile: "./europe/greece.png",    countryName: "ギリシア" },
-            { meaning: "ブダペスト",     imgFile: "./europe/hungary.png",   countryName: "ハンガリー" },
-            { meaning: "レイキャビク",   imgFile: "./europe/iceland.png",   countryName: "アイスランド" },
-            { meaning: "ダブリン",       imgFile: "./europe/Ireland.png",   countryName: "アイルランド" },
-            { meaning: "ローマ",         imgFile: "./europe/italy.png",     countryName: "イタリア" },
-            { meaning: "アムステルダム", imgFile: "./europe/Netherlands.png", countryName: "オランダ" },
-            { meaning: "オスロ",         imgFile: "./europe/norway.png",    countryName: "ノルウェー" },
-            { meaning: "ワルシャワ",     imgFile: "./europe/poland.png",    countryName: "ポーランド" },
-            { meaning: "リスボン",       imgFile: "./europe/portugal.png",  countryName: "ポルトガル" },
-            { meaning: "ブカレスト",     imgFile: "./europe/romania.png",   countryName: "ルーマニア" },
-            { meaning: "マドリード",     imgFile: "./europe/spain.png",     countryName: "スペイン" },
-            { meaning: "ストックホルム", imgFile: "./europe/sweden.png",    countryName: "スウェーデン" },
-            { meaning: "ベルン",         imgFile: "./europe/Switzerland.png", countryName: "スイス" },
-            { meaning: "ロンドン",       imgFile: "./europe/uk.png",        countryName: "イギリス" },
-            { meaning: "キーウ",         imgFile: "./europe/Ukraine.png",   countryName: "ウクライナ" }
-        ],
-        america: [
-            { meaning: "ワシントンD.C.", imgFile: "./america/usa.png", countryName: "アメリカ合衆国" },
-            { meaning: "オタワ",         imgFile: "./america/canada.png", countryName: "カナダ" },
-            { meaning: "メキシコシティ", imgFile: "./america/mexico.png", countryName: "メキシコ" },
-            { meaning: "ハバナ",         imgFile: "./america/cuba.png", countryName: "キューバ" },
-            { meaning: "キト",            imgFile: "./america/ecuador.png", countryName: "エクアドル" },
-            { meaning: "リマ",           imgFile: "./america/peru.png", countryName: "ペルー" },
-            { meaning: "サンティアゴ",   imgFile: "./america/chile.png", countryName: "チリ" },
-            { meaning: "スクレ",         imgFile: "./america/bolivia.png", countryName: "ボリビア" },
-            { meaning: "ブラジリア",     imgFile: "./america/brazil.png", countryName: "ブラジル" },
-            { meaning: "ブエノスアイレス", imgFile: "./america/argentina.png", countryName: "アルゼンチン" },
-            { meaning: "（ボゴタ）",         imgFile: "./america/colombia.png", countryName: "コロンビア" },
-            { meaning: "（カラカス）",       imgFile: "./america/venezuela.png", countryName: "ベネズエラ" }
-        ],
-        africa: [
-            { meaning: "アクラ",           imgFile: "./africa/Ghana.png",                         countryName: "ガーナ" },
-            { meaning: "アブジャ",         imgFile: "./africa/Nigeria.png",                       countryName: "ナイジェリア" },
-            { meaning: "カイロ",           imgFile: "./africa/Egypt.png",                         countryName: "エジプト" },
-            { meaning: "アディスアベバ",   imgFile: "./africa/Ethiopia.png",                      countryName: "エチオピア" },
-            { meaning: "ナイロビ",         imgFile: "./africa/Kenya.png",                         countryName: "ケニア" },
-            { meaning: "プレトリア",       imgFile: "./africa/SouthAfrica.png",                   countryName: "南アフリカ共和国" },
-            { meaning: "（アルジェ）",     imgFile: "./africa/Algeria.png",                       countryName: "アルジェリア" },
-            { meaning: "（ヤムスクロ）",   imgFile: "./africa/IvoryCoast.png",                    countryName: "コートジボワール" },
-            { meaning: "（キンシャサ）",   imgFile: "./africa/DemocraticRepublicoftheCongo.png",  countryName: "コンゴ民主共和国" },
-            { meaning: "（アンタナナリボ）",imgFile: "./africa/Madagascar.png",                   countryName: "マダガスカル" }
+            { word: "was", meaning: "〜であった・いた（am, isの過去形）", otherwords: ["were", "did", "had"], othermeans: ["〜であった・いた（areの過去形）", "〜した（do, doesの過去形）", "持っていた・食べた（have, hasの過去形）"] },
+            { word: "were", meaning: "〜であった・いた（areの過去形）", otherwords: ["was", "did", "had"], othermeans: ["〜であった・いた（am, isの過去形）", "〜した（do, doesの過去形）", "持っていた・食べた（have, hasの過去形）"] },
+            { word: "played", meaning: "（playの過去形）", otherwords: ["liked", "wanted", "studied"], othermeans: ["（likeの過去形）", "（wantの過去形）", "（studyの過去形）"] },
+            { word: "liked", meaning: "（likeの過去形）", otherwords: ["played", "wanted", "studied"], othermeans: ["（playの過去形）", "（wantの過去形）", "（studyの過去形）"] },
+            { word: "wanted", meaning: "（wantの過去形）", otherwords: ["played", "liked", "needed"], othermeans: ["（playの過去形）", "（likeの過去形）", "必要とした（needの過去形）"] },
+            { word: "studied", meaning: "（studyの過去形）", otherwords: ["played", "liked", "tried"], othermeans: ["（playの過去形）", "（likeの過去形）", "試した・努力した（tryの過去形）"] },
+            { word: "went", meaning: "行った（goの過去形）", otherwords: ["came", "did", "had"], othermeans: ["来た（comeの過去形）", "〜した（do, doesの過去形）", "持っていた・食べた（have, hasの過去形）"] },
+            { word: "came", meaning: "来た（comeの過去形）", otherwords: ["went", "did", "had"], othermeans: ["行った（goの過去形）", "〜した（do, doesの過去形）", "持っていた・食べた（have, hasの過去形）"] },
+            { word: "did", meaning: "〜した（do, doesの過去形）", otherwords: ["had", "went", "came"], othermeans: ["持っていた・食べた（have, hasの過去形）", "行った（goの過去形）", "来た（comeの過去形）"] },
+            { word: "had", meaning: "持っていた・食べた（have, hasの過去形）", otherwords: ["did", "went", "came"], othermeans: ["〜した（do, doesの過去形）", "行った（goの過去形）", "来た（comeの過去形）"] }
         ],
         asiaOceania: [
-            { meaning: "モスクワ",         imgFile: "./asia-oceania/Russia.png",             countryName: "ロシア連邦" },
-            { meaning: "アンカラ",         imgFile: "./asia-oceania/Turkey.png",             countryName: "トルコ" },
-            { meaning: "エルサレム",       imgFile: "./asia-oceania/Israel.png",             countryName: "イスラエル" },
-            { meaning: "バグダッド",       imgFile: "./asia-oceania/Iraq.png",               countryName: "イラク" },
-            { meaning: "テヘラン",         imgFile: "./asia-oceania/Iran.png",               countryName: "イラン" },
-            { meaning: "リヤド",           imgFile: "./asia-oceania/SaudiArabia.png",        countryName: "サウジアラビア" },
-            { meaning: "アブダビ",         imgFile: "./asia-oceania/UnitedArabEmirates.png", countryName: "アラブ首長国連邦" },
-            { meaning: "イスラマバード",   imgFile: "./asia-oceania/Pakistan.png",           countryName: "パキスタン" },
-            { meaning: "デリー",     imgFile: "./asia-oceania/India.png",                    countryName: "インド" },
-            { meaning: "ダッカ",           imgFile: "./asia-oceania/Bangladesh.png",         countryName: "バングラデシュ" },
-            { meaning: "ウランバートル",   imgFile: "./asia-oceania/Mongolia.png",           countryName: "モンゴル" },
-            { meaning: "ペキン（北京）",   imgFile: "./asia-oceania/China.png",              countryName: "中華人民共和国" },
-            { meaning: "ピョンヤン（平壌）", imgFile: "./asia-oceania/NorthKorea.png",       countryName: "朝鮮民主主義人民共和国（北朝鮮）" },
-            { meaning: "ソウル",           imgFile: "./asia-oceania/SouthKorea.png",         countryName: "大韓民国（韓国）" },
-            { meaning: "バンコク",         imgFile: "./asia-oceania/Thailand.png",           countryName: "タイ" },
-            { meaning: "ハノイ",           imgFile: "./asia-oceania/Vietnam.png",            countryName: "ベトナム" },
-            { meaning: "クアラルンプール", imgFile: "./asia-oceania/Malaysia.png",           countryName: "マレーシア" },
-            { meaning: "シンガポール",     imgFile: "./asia-oceania/Singapore.png",          countryName: "シンガポール" },
-            { meaning: "マニラ",           imgFile: "./asia-oceania/Philippines.png",        countryName: "フィリピン" },
-            { meaning: "ジャカルタ",       imgFile: "./asia-oceania/Indonesia.png",          countryName: "インドネシア" },
-            { meaning: "キャンベラ",       imgFile: "./asia-oceania/Australia.png",          countryName: "オーストラリア" },
-            { meaning: "ウェリントン",     imgFile: "./asia-oceania/NewZealand.png",         countryName: "ニュージーランド" },
-            { meaning: "（アスタナ）",     imgFile: "./asia-oceania/Kazakhstan.png",         countryName: "カザフスタン" },
-            { meaning: "（カブール）",     imgFile: "./asia-oceania/Afghanistan.png",        countryName: "アフガニスタン" },
-            { meaning: "スリジャヤワルダナプラコッテ",     imgFile: "./asia-oceania/SriLanka.png",    countryName: "スリランカ" },
-            { meaning: "（プノンペン）",   imgFile: "./asia-oceania/Cambodia.png",           countryName: "カンボジア" }
+        { mapUrl: "./asia-oceania/Russia.png", meaning: "ロシア連邦 首都：モスクワ", othermeans: ["カザフスタン 首都：（アスタナ）", "モンゴル 首都：ウランバートル", "中華人民共和国 首都：ペキン（北京）"] },
+        { mapUrl: "./asia-oceania/Turkey.png", meaning: "トルコ 首都：アンカラ", othermeans: ["イラン 首都：テヘラン", "イラク 首都：バグダッド", "イスラエル 首都：エルサレム"] },
+        { mapUrl: "./asia-oceania/Israel.png", meaning: "イスラエル 首都：エルサレム", othermeans: ["サウジアラビア 首都：リヤド", "トルコ 首都：アンカラ", "イラク 首都：バグダッド"] },
+        { mapUrl: "./asia-oceania/Iraq.png", meaning: "イラク 首都：バグダッド", othermeans: ["イラン 首都：テヘラン", "サウジアラビア 首都：リヤド", "パキスタン 首都：イスラマバード"] },
+        { mapUrl: "./asia-oceania/Iran.png", meaning: "イラン 首都：テヘラン", othermeans: ["イラク 首都：バグダッド", "サウジアラビア 首都：リヤド", "アフガニスタン 首都：（カブール）"] },
+        { mapUrl: "./asia-oceania/SaudiArabia.png", meaning: "サウジアラビア 首都：リヤド", othermeans: ["アラブ首長国連邦 首都：アブダビ", "イラク 首都：バグダッド", "イスラエル 首都：エルサレム"] },
+        { mapUrl: "./asia-oceania/UnitedArabEmirates.png", meaning: "アラブ首長国連邦 首都：アブダビ", othermeans: ["サウジアラビア 首都：リヤド", "カタール 首都：ドーハ", "イラク 首都：バグダッド"] },
+        { mapUrl: "./asia-oceania/Pakistan.png", meaning: "パキスタン 首都：イスラマバード", othermeans: ["インド 首都：デリー", "バングラデシュ 首都：ダッカ", "アフガニスタン 首都：（カブール）"] },
+        { mapUrl: "./asia-oceania/India.png", meaning: "インド 首都：デリー", othermeans: ["パキスタン 首都：イスラマバード", "バングラデシュ 首都：ダッカ", "スリランカ 首都：スリジャヤワルダナプラコッテ"] },
+        { mapUrl: "./asia-oceania/Bangladesh.png", meaning: "バングラデシュ 首都：ダッカ", othermeans: ["インド 首都：デリー", "ミャンマー 首都：ネピドー", "スリランカ 首都：スリジャヤワルダナプラコッテ"] },
+        { mapUrl: "./asia-oceania/Mongolia.png", meaning: "モンゴル 首都：ウランバートル", othermeans: ["カザフスタン 首都：（アスタナ）", "中華人民共和国 首都：ペキン（北京）", "ロシア連邦 首都：モスクワ"] },
+        { mapUrl: "./asia-oceania/China.png", meaning: "中華人民共和国 首都：ペキン（北京）", othermeans: ["大韓民国（韓国） 首都：ソウル", "朝鮮民主主義人民共和国（北朝鮮） 首都：ピョンヤン（平壌）", "モンゴル 首都：ウランバートル"] },
+        { mapUrl: "./asia-oceania/NorthKorea.png", meaning: "朝鮮民主主義人民共和国（北朝鮮） 首都：ピョンヤン（平壌）", othermeans: ["大韓民国（韓国） 首都：ソウル", "中華人民共和国 首都：ペキン（北京）", "ベトナム 首都：ハノイ"] },
+        { mapUrl: "./asia-oceania/SouthKorea.png", meaning: "大韓民国（韓国） 首都：ソウル", othermeans: ["朝鮮民主主義人民共和国（北朝鮮） 首都：ピョンヤン（平壌）", "中華人民共和国 首都：ペキン（北京）", "タイ 首都：バンコク"] },
+        { mapUrl: "./asia-oceania/Thailand.png", meaning: "タイ 首都：バンコク", othermeans: ["ベトナム 首都：ハノイ", "マレーシア 首都：クアラルンプール", "カンボジア 首都：（プノンペン）"] },
+        { mapUrl: "./asia-oceania/Vietnam.png", meaning: "ベトナム 首都：ハノイ", othermeans: ["カンボジア 首都：（プノンペン）", "タイ 首都：バンコク", "フィリピン 首都：マニラ"] },
+        { mapUrl: "./asia-oceania/Malaysia.png", meaning: "マレーシア 首都：クアラルンプール", othermeans: ["シンガポール 首都：シンガポール", "インドネシア 首都：ジャカルタ", "タイ 首都：バンコク"] },
+        { mapUrl: "./asia-oceania/Singapore.png", meaning: "シンガポール 首都：シンガポール", othermeans: ["マレーシア 首都：クアラルンプール", "インドネシア 首都：ジャカルタ", "フィリピン 首都：マニラ"] },
+        { mapUrl: "./asia-oceania/Philippines.png", meaning: "フィリピン 首都：マニラ", othermeans: ["インドネシア 首都：ジャカルタ", "ベトナム 首都：ハノイ", "マレーシア 首都：クアラルンプール"] },
+        { mapUrl: "./asia-oceania/Indonesia.png", meaning: "インドネシア 首都：ジャカルタ", othermeans: ["マレーシア 首都：クアラルンプール", "フィリピン 首都：マニラ", "シンガポール 首都：シンガポール"] },
+        { mapUrl: "./asia-oceania/Australia.png", meaning: "オーストラリア 首都：キャンベラ", othermeans: ["ニュージーランド 首都：ウェリントン", "インドネシア 首都：ジャカルタ", "パプアニューギニア 首都：ポートモレスビー"] },
+        { mapUrl: "./asia-oceania/NewZealand.png", meaning: "ニュージーランド 首都：ウェリントン", othermeans: ["オーストラリア 首都：キャンベラ", "フィジー 首都：スバ", "マレーシア 首都：クアラルンプール"] },
+        { mapUrl: "./asia-oceania/Kazakhstan.png", meaning: "カザフスタン 首都：（アスタナ）", othermeans: ["モンゴル 首都：ウランバートル", "アフガニスタン 首都：（カブール）", "ロシア連邦 首都：モスクワ"] },
+        { mapUrl: "./asia-oceania/Afghanistan.png", meaning: "アフガニスタン 首都：（カブール）", othermeans: ["パキスタン 首都：イスラマバード", "イラン 首都：テヘラン", "カザフスタン 首都：（アスタナ）"] },
+        { mapUrl: "./asia-oceania/SriLanka.png", meaning: "スリランカ 首都：スリジャヤワルダナプラコッテ", othermeans: ["インド 首都：デリー", "バングラデシュ 首都：ダッカ", "マレーシア 首都：クアラルンプール"] },
+        { mapUrl: "./asia-oceania/Cambodia.png", meaning: "カンボジア 首都：（プノンペン）", othermeans: ["ベトナム 首都：ハノイ", "タイ 首都：バンコク", "マレーシア 首都：クアラルンプール"] }
+        ],
+    africa: [
+        { mapUrl: "./africa/Ghana.png", meaning: "ガーナ 首都：アクラ", othermeans: ["ナイジェリア 首都：アブジャ", "コートジボワール 首都：（ヤムスクロ）", "ケニア 首都：ナイロビ"] },
+        { mapUrl: "./africa/Nigeria.png", meaning: "ナイジェリア 首都：アブジャ", othermeans: ["ガーナ 首都：アクラ", "アルジェリア 首都：（アルジェ）", "コンゴ民主共和国 首都：（キンシャサ）"] },
+        { mapUrl: "./africa/Egypt.png", meaning: "エジプト 首都：カイロ", othermeans: ["アルジェリア 首都：（アルジェ）", "エチオピア 首都：アディスアベバ", "ケニア 首都：ナイロビ"] },
+        { mapUrl: "./africa/Ethiopia.png", meaning: "エチオピア 首都：アディスアベバ", othermeans: ["ケニア 首都：ナイロビ", "エジプト 首都：カイロ", "南アフリカ共和国 首都：プレトリア"] },
+        { mapUrl: "./africa/Kenya.png", meaning: "ケニア 首都：ナイロビ", othermeans: ["エチオピア 首都：アディスアベバ", "マダガスカル 首都：（アンタナナリボ）", "コートジボワール 首都：（ヤムスクロ）"] },
+        { mapUrl: "./africa/SouthAfrica.png", meaning: "南アフリカ共和国 首都：プレトリア", othermeans: ["マダガスカル 首都：（アンタナナリボ）", "ケニア 首都：ナイロビ", "コンゴ民主共和国 首都：（キンシャサ）"] },
+        { mapUrl: "./africa/Algeria.png", meaning: "アルジェリア 首都：（アルジェ）", othermeans: ["エジプト 首都：カイロ", "ナイジェリア 首都：アブジャ", "コートジボワール 首都：（ヤムスクロ）"] },
+        { mapUrl: "./africa/IvoryCoast.png", meaning: "コートジボワール 首都：（ヤムスクロ）", othermeans: ["ガーナ 首都：アクラ", "ナイジェリア 首都：アブジャ", "アルジェリア 首都：（アルジェ）"] },
+        { mapUrl: "./africa/DemocraticRepublicoftheCongo.png", meaning: "コンゴ民主共和国 首都：（キンシャサ）", othermeans: ["南アフリカ共和国 首都：プレトリア", "ナイジェリア 首都：アブジャ", "エチオピア 首都：アディスアベバ"] },
+        { mapUrl: "./africa/Madagascar.png", meaning: "マダガスカル 首都：（アンタナナリボ）", othermeans: ["南アフリカ共和国 首都：プレトリア", "ケニア 首都：ナイロビ", "エチオピア 首都：アディスアベバ"] }
+    ],
+        america: [
+        { mapUrl: "./america/usa.png", meaning: "アメリカ合衆国 首都：ワシントンD.C.", othermeans: ["カナダ 首都：オタワ", "メキシコ 首都：メキシコシティ", "キューバ 首都：ハバナ"] },
+        { mapUrl: "./america/canada.png", meaning: "カナダ 首都：オタワ", othermeans: ["アメリカ合衆国 首都：ワシントンD.C.", "チリ 首都：サンティアゴ", "アルゼンチン 首都：ブエノスアイレス"] },
+        { mapUrl: "./america/mexico.png", meaning: "メキシコ 首都：メキシコシティ", othermeans: ["キューバ 首都：ハバナ", "コロンビア 首都：（ボゴタ）", "アメリカ合衆国 首都：ワシントンD.C."] },
+        { mapUrl: "./america/cuba.png", meaning: "キューバ 首都：ハバナ", othermeans: ["メキシコ 首都：メキシコシティ", "ベネズエラ 首都：（カラカス）", "コロンビア 首都：（ボゴタ）"] },
+        { mapUrl: "./america/ecuador.png", meaning: "エクアドル 首都：キト", othermeans: ["ペルー 首都：リマ", "コロンビア 首都：（ボゴタ）", "ボリビア 首都：スクレ"] },
+        { mapUrl: "./america/peru.png", meaning: "ペルー 首都：リマ", othermeans: ["ボリビア 首都：スクレ", "エクアドル 首都：キト", "チリ 首都：サンティアゴ"] },
+        { mapUrl: "./america/chile.png", meaning: "チリ 首都：サンティアゴ", othermeans: ["アルゼンチン 首都：ブエノスアイレス", "ペルー 首都：リマ", "ボリビア 首都：スクレ"] },
+        { mapUrl: "./america/bolivia.png", meaning: "ボリビア 首都：スクレ", othermeans: ["ペルー 首都：リマ", "ブラジル 首都：ブラジリア", "エクアドル 首都：キト"] },
+        { mapUrl: "./america/brazil.png", meaning: "ブラジル 首都：ブラジリア", othermeans: ["アルゼンチン 首都：ブエノスアイレス", "コロンビア 首都：（ボゴタ）", "ベネズエラ 首都：（カラカス）"] },
+        { mapUrl: "./america/argentina.png", meaning: "アルゼンチン 首都：ブエノスアイレス", othermeans: ["チリ 首都：サンティアゴ", "ブラジル 首都：ブラジリア", "ウルグアイ 首都：モンテビデオ"] },
+        { mapUrl: "./america/colombia.png", meaning: "コロンビア 首都：（ボゴタ）", othermeans: ["ベネズエラ 首都：（カラカス）", "エクアドル 首都：キト", "ペルー 首都：リマ"] },
+        { mapUrl: "./america/venezuela.png", meaning: "ベネズエラ 首都：（カラカス）", othermeans: ["コロンビア 首都：（ボゴタ）", "ブラジル 首都：ブラジリア", "キューバ 首都：ハバナ"] }
+        ],
+        europe: [
+        { mapUrl: "./europe/austria.png", meaning: "オーストリア 首都：ウィーン", othermeans: ["ベルギー 首都：ブリュッセル", "チェコ 首都：プラハ", "スイス 首都：ベルン"] },
+        { mapUrl: "./europe/Belgium.png", meaning: "ベルギー 首都：ブリュッセル", othermeans: ["オランダ 首都：アムステルダム", "フランス 首都：パリ", "ドイツ 首都：ベルリン"] },
+        { mapUrl: "./europe/czechia.png", meaning: "チェコ 首都：プラハ", othermeans: ["ポーランド 首都：ワルシャワ", "ハンガリー 首都：ブダペスト", "オーストリア 首都：ウィーン"] },
+        { mapUrl: "./europe/denmark.png", meaning: "デンマーク 首都：コペンハーゲン", othermeans: ["ノルウェー 首都：オスロ", "スウェーデン 首都：ストックホルム", "フィンランド 首都：ヘルシンキ"] },
+        { mapUrl: "./europe/finland.png", meaning: "フィンランド 首都：ヘルシンキ", othermeans: ["ノルウェー 首都：オスロ", "スウェーデン 首都：ストックホルム", "アイスランド 首都：レイキャビク"] },
+        { mapUrl: "./europe/france.png", meaning: "フランス 首都：パリ", othermeans: ["イタリア 首都：ローマ", "ドイツ 首都：ベルリン", "スペイン 首都：マドリード"] },
+        { mapUrl: "./europe/germany.png", meaning: "ドイツ 首都：ベルリン", othermeans: ["フランス 首都：パリ", "ポーランド 首都：ワルシャワ", "オーストリア 首都：ウィーン"] },
+        { mapUrl: "./europe/greece.png", meaning: "ギリシア 首都：アテネ", othermeans: ["イタリア 首都：ローマ", "ルーマニア 首都：ブカレスト", "ポルトガル 首都：リスボン"] },
+        { mapUrl: "./europe/hungary.png", meaning: "ハンガリー 首都：ブダペスト", othermeans: ["チェコ 首都：プラハ", "ルーマニア 首都：ブカレスト", "ポーランド 首都：ワルシャワ"] },
+        { mapUrl: "./europe/iceland.png", meaning: "アイスランド 首都：レイキャビク", othermeans: ["アイルランド 首都：ダブリン", "デンマーク 首都：コペンハーゲン", "ノルウェー 首都：オスロ"] },
+        { mapUrl: "./europe/Ireland.png", meaning: "アイルランド 首都：ダブリン", description: "イギリスの隣国", othermeans: ["イギリス 首都：ロンドン", "アイスランド 首都：レイキャビク", "オランダ 首都：アムステルダム"] },
+        { mapUrl: "./europe/italy.png", meaning: "イタリア 首都：ローマ", othermeans: ["スペイン 首都：マドリード", "ギリシア 首都：アテネ", "フランス 首都：パリ"] },
+        { mapUrl: "./europe/Netherlands.png", meaning: "オランダ 首都：アムステルダム", othermeans: ["ベルギー 首都：ブリュッセル", "ドイツ 首都：ベルリン", "デンマーク 首都：コペンハーゲン"] },
+        { mapUrl: "./europe/norway.png", meaning: "ノルウェー 首都：オスロ", othermeans: ["スウェーデン 首都：ストックホルム", "フィンランド 首都：ヘルシンキ", "デンマーク 首都：コペンハーゲン"] },
+        { mapUrl: "./europe/poland.png", meaning: "ポーランド 首都：ワルシャワ", othermeans: ["ウクライナ 首都：キーウ", "チェコ 首都：プラハ", "ドイツ 首都：ベルリン"] },
+        { mapUrl: "./europe/portugal.png", meaning: "ポルトガル 首都：リスボン", othermeans: ["スペイン 首都：マドリード", "イタリア 首都：ローマ", "フランス 首都：パリ"] },
+        { mapUrl: "./europe/romania.png", meaning: "ルーマニア 首都：ブカレスト", othermeans: ["ハンガリー 首都：ブダペスト", "ウクライナ 首都：キーウ", "ギリシア 首都：アテネ"] },
+        { mapUrl: "./europe/spain.png", meaning: "スペイン 首都：マドリード", othermeans: ["ポルトガル 首都：リスボン", "イタリア 首都：ローマ", "フランス 首都：パリ"] },
+        { mapUrl: "./europe/sweden.png", meaning: "スウェーデン 首都：ストックホルム", othermeans: ["ノルウェー 首都：オスロ", "フィンランド 首都：ヘルシンキ", "デンマーク 首都：コペンハーゲン"] },
+        { mapUrl: "./europe/Switzerland.png", meaning: "スイス 首都：ベルン", othermeans: ["オーストリア 首都：ウィーン", "ドイツ 首都：ベルリン", "イタリア 首都：ローマ"] },
+        { mapUrl: "./europe/uk.png", meaning: "イギリス 首都：ロンドン", othermeans: ["アイルランド 首都：ダブリン", "フランス 首都：パリ", "オランダ 首都：アムステルダム"] },
+        { mapUrl: "./europe/Ukraine.png", meaning: "ウクライナ 首都：キーウ", othermeans: ["ポーランド 首都：ワルシャワ", "ルーマニア 首都：ブカレスト", "ロシア連邦 首都：モスクワ"] }
         ]
     };
 
+    let currentCategory = "";
+    let currentMode = ""; 
+    let playMode = "test"; 
     let currentQuestions = [];
     let currentIndex = 0;
-    let correctCount = 0;
-    let userResults = [];
-    let incorrectQuestions = [];
-    let currentDirection = null;  // 'ja2en' | 'en2ja' | null
-    let currentEnWord = '';       // 読み上げ対象の英単語
-    let isLearningMode = false;   // 学習モード ON/OFF
-    let quizStartTime  = null;    // 計測開始時刻
+    let score = 0;
+    let wrongQuestions = [];
+    let startTime = null;
+    let currentDatasetBackup = []; 
+    let currentChoices = [];
 
-    function startQuiz(type, direction) {
-        const rawData = datasets[type];
-        currentQuestions = [];
-        userResults = [];
-        incorrectQuestions = [];
-        currentIndex = 0;
-        correctCount = 0;
-        currentDirection = direction || null;
-        quizStartTime = Date.now();
+    // ── ローカルストレージ（学習時間・回数ダッシュボード） ──
+    let sessionStartTime = Date.now();
+    let totalStudyTimeMinutes = parseFloat(localStorage.getItem('totalStudyTimeMinutes')) || 0;
+    let totalStudyCount = parseInt(localStorage.getItem('totalStudyCount')) || 0;
 
-        // 学習回数を記録
-        const cnt = parseInt(localStorage.getItem(`studyCount_${type}`) || '0', 10);
-        localStorage.setItem(`studyCount_${type}`, cnt + 1);
+    let todayStr = new Date().toLocaleDateString();
+    let todayStudyTimeMinutes = 0;
+    let todayStudyCount = 0;
 
-        rawData.forEach(item => {
-            if (type === 'europe' || type === 'america' || type === 'africa' || type === 'asiaOceania') {
-                currentQuestions.push({
-                    display: "表示された画像の国名・首都はどこでしょうか？",
-                    answer: `国名：${item.countryName}　　首都：${item.meaning}`,
-                    imgFile: item.imgFile,
-                    countryName: item.countryName
-                });
-            } else if (direction === 'ja2en') {
-                currentQuestions.push({
-                    display: item.meaning,
-                    answer: item.word,
-                    imgFile: null
-                });
-            } else {
-                currentQuestions.push({
-                    display: item.word,
-                    answer: item.meaning,
-                    imgFile: null
-                });
-            }
-        });
-
-        currentQuestions.sort(() => Math.random() - 0.5);
-        switchScreen('quiz-screen');
-        showQuestion();
+    if (localStorage.getItem('todayDate') === todayStr) {
+        todayStudyTimeMinutes = parseFloat(localStorage.getItem('todayStudyTimeMinutes')) || 0;
+        todayStudyCount = parseInt(localStorage.getItem('todayStudyCount')) || 0;
+    } else {
+        localStorage.setItem('todayDate', todayStr);
+        localStorage.setItem('todayStudyTimeMinutes', "0");
+        localStorage.setItem('todayStudyCount', "0");
     }
 
-    function startRetryQuiz() {
-        if (incorrectQuestions.length === 0) return;
+    function updateDashboardUI() {
+        document.getElementById('today-study-time').textContent = Math.round(todayStudyTimeMinutes) + "分";
+        document.getElementById('today-study-count').textContent = todayStudyCount + "回";
+        document.getElementById('total-study-time').textContent = Math.round(totalStudyTimeMinutes) + "分";
+        document.getElementById('total-study-count').textContent = totalStudyCount + "回";
+    }
 
-        currentQuestions = [...incorrectQuestions].sort(() => Math.random() - 0.5);
-        userResults = [];
-        incorrectQuestions = [];
+    setInterval(() => {
+        let now = Date.now();
+        let elapsedMs = now - sessionStartTime;
+        sessionStartTime = now;
+        let elapsedMin = elapsedMs / (1000 * 60);
+
+        todayStudyTimeMinutes += elapsedMin;
+        totalStudyTimeMinutes += elapsedMin;
+
+        localStorage.setItem('todayStudyTimeMinutes', todayStudyTimeMinutes.toString());
+        localStorage.setItem('totalStudyTimeMinutes', totalStudyTimeMinutes.toString());
+
+        updateDashboardUI();
+    }, 10000);
+
+    function addStudyCount() {
+        todayStudyCount++;
+        totalStudyCount++;
+        localStorage.setItem('todayStudyCount', todayStudyCount.toString());
+        localStorage.setItem('totalStudyCount', totalStudyCount.toString());
+        updateDashboardUI();
+    }
+
+    function updateCategoryHeader(catKey) {
+        let cnt = parseInt(localStorage.getItem(`count_${catKey}`)) || 0;
+        let last = localStorage.getItem(`lastDate_${catKey}`) || "";
+        
+        let cntEl = document.getElementById(`count-${catKey}`);
+        let lastEl = document.getElementById(`lastDate-${catKey}`);
+        
+        if (cntEl) {
+            cntEl.textContent = cnt > 0 ? `学習回数: ${cnt}回` : "";
+        }
+        if (lastEl) {
+            lastEl.textContent = last ? `最終: ${last}` : "";
+        }
+    }
+
+    function recordCategoryFinished(catKey) {
+        let cnt = parseInt(localStorage.getItem(`count_${catKey}`)) || 0;
+        cnt++;
+        localStorage.setItem(`count_${catKey}`, cnt.toString());
+        
+        let nowStr = new Date().toLocaleDateString();
+        localStorage.setItem(`lastDate_${catKey}`, nowStr);
+        
+        updateCategoryHeader(catKey);
+        addStudyCount();
+    }
+
+    function initHeaders() {
+        Object.keys(datasets).forEach(catKey => {
+            updateCategoryHeader(catKey);
+        });
+        updateDashboardUI();
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+        initHeaders();
+    });
+
+    function changePlayMode(mode) {
+        playMode = mode;
+        const labels = ["label-learn", "label-fourChoice", "label-test"];
+        labels.forEach(id => {
+            document.getElementById(id).classList.remove('active-mode');
+        });
+        if (mode === 'learn') {
+            document.getElementById('label-learn').classList.add('active-mode');
+        } else if (mode === 'fourChoice') {
+            document.getElementById('label-fourChoice').classList.add('active-mode');
+        } else {
+            document.getElementById('label-test').classList.add('active-mode');
+        }
+    }
+
+    function startQuiz(catKey, mode) {
+        currentCategory = catKey;
+        currentMode = mode;
+        wrongQuestions = [];
+        startTime = new Date();
+
+        let source = datasets[catKey];
+        if (!source || source.length === 0) return;
+
+        currentDatasetBackup = [...source]; 
+        let selected = [];
+        
+        if (playMode === 'learn') {
+            // 学習モードはシャッフルせずに全問表示
+            selected = [...source];
+        } else {
+            // 試験・四択モードは最大10問をランダム抽出
+            let shuffled = [...source].sort(() => 0.5 - Math.random());
+            selected = shuffled.slice(0, 10);
+        }
+
+        currentQuestions = selected.map(item => {
+            let qText = "";
+            let aText = "";
+            let speakText = "";
+            let img = item.mapUrl || "";
+
+            if (mode === "ja2en") {
+                qText = item.meaning;
+                aText = item.word;
+                speakText = item.word;
+            } else if (mode === "en2ja") {
+                qText = item.word;
+                aText = item.meaning;
+                speakText = item.word;
+            } else if (mode === "map") {
+                qText = "国名と首都名は？";
+                aText = `「${item.meaning}」`;
+                speakText = item.word;
+            }
+
+            return {
+                original: item,
+                q: qText,
+                a: aText,
+                speak: speakText,
+                img: img
+            };
+        });
+
         currentIndex = 0;
-        correctCount = 0;
-        quizStartTime = Date.now();
+        score = 0;
 
-        switchScreen('quiz-screen');
+        document.getElementById("menu-screen").classList.remove("active");
+        document.getElementById("result-screen").classList.remove("active");
+        document.getElementById("quiz-screen").classList.add("active");
+
         showQuestion();
     }
 
     function showQuestion() {
-        const q = currentQuestions[currentIndex];
-        document.getElementById('progress').innerText = `${currentIndex + 1} / ${currentQuestions.length}`;
+        const item = currentQuestions[currentIndex];
+        document.getElementById("progress").textContent = `${currentIndex + 1} / ${currentQuestions.length}`;
 
-        const wordEl = document.getElementById('word');
-        if (currentDirection === 'en2ja') {
-            currentEnWord = q.display;
-            wordEl.innerHTML =
-                `<span>${q.display}</span><button class="speak-btn" onclick="speakCurrentWord()" title="英語を読み上げる">🔊</button>`;
+        // 地図表示
+        if (item.img) {
+            document.getElementById("map-area").style.display = "block";
+            document.getElementById("country-img").src = item.img;
         } else {
-            wordEl.innerText = q.display;
-        }
-        
-        const meaningEl = document.getElementById('meaning');
-        if (currentDirection === 'ja2en') {
-            currentEnWord = q.answer;
-            meaningEl.innerHTML =
-                `<span>${q.answer}</span><button class="speak-btn" onclick="speakCurrentWord()" title="英語を読み上げる">🔊</button>`;
-        } else {
-            meaningEl.innerText = q.answer;
-        }
-        meaningEl.classList.add('hidden');
-
-        const mapArea = document.getElementById('map-area');
-        const imgEl = document.getElementById('country-img');
-        
-        if (q.imgFile) {
-            mapArea.style.display = 'block';
-            imgEl.src = q.imgFile;
-        } else {
-            mapArea.style.display = 'none';
-            imgEl.src = "";
+            document.getElementById("map-area").style.display = "none";
         }
 
-        document.getElementById('action-before').style.display    = isLearningMode ? 'none'  : 'block';
-        document.getElementById('action-after').style.display     = 'none';
-        document.getElementById('action-learning').style.display  = isLearningMode ? 'block' : 'none';
-
-        if (isLearningMode) {
-            meaningEl.classList.remove('hidden');
-        } else {
-            meaningEl.classList.add('hidden');
+        // 読み上げスピーカー表示付きのタイトル生成
+        let speakHtml = "";
+        if (item.speak) {
+            speakHtml = `<button class="speak-btn" onclick="speakWord('${escapeHtml(item.speak)}')">🔊</button>`;
         }
+        document.getElementById("word").innerHTML = item.q + speakHtml;
+
+        // 解答エリアの非表示
+        document.getElementById("meaning").textContent = item.a;
+        document.getElementById("meaning").classList.add("hidden");
+
+        // アクションボタン・選択肢の切り替え
+        if (playMode === 'learn') {
+            // 学習モード
+            document.getElementById("action-before").style.display = "none";
+            document.getElementById("action-after").style.display = "none";
+            document.getElementById("action-learning").style.display = "block";
+            document.getElementById("choices-container").style.display = "none";
+            document.getElementById("meaning").classList.remove("hidden"); // 解答を最初から見せる
+        } else if (playMode === 'fourChoice') {
+            // 四択モード
+            document.getElementById("action-before").style.display = "none";
+            document.getElementById("action-after").style.display = "none";
+            document.getElementById("action-learning").style.display = "none";
+            document.getElementById("choices-container").style.display = "block";
+            generateFourChoices(item);
+        } else {
+            // 試験モード
+            document.getElementById("action-before").style.display = "block";
+            document.getElementById("action-after").style.display = "none";
+            document.getElementById("action-learning").style.display = "none";
+            document.getElementById("choices-container").style.display = "none";
+        }
+    }
+
+    // 四択ボタンの生成
+    function generateFourChoices(item) {
+        let correctText = "";
+        let dummyPool = [];
+
+        if (currentMode === "ja2en") {
+            correctText = item.original.word;
+            dummyPool = item.original.otherwords || [];
+        } else if (currentMode === "en2ja") {
+            correctText = item.original.meaning;
+            dummyPool = item.original.othermeans || [];
+        } else if (currentMode === "map") {
+            correctText = item.original.meaning;
+            dummyPool = item.original.othermeans || [];
+        }
+
+        // 不足時に全データセットから補完
+        if (dummyPool.length < 3) {
+            let pool = currentDatasetBackup
+                .filter(d => d.word !== item.original.word)
+                .map(d => (currentMode === "ja2en" ? d.word : d.meaning));
+            pool = [...new Set(pool)].sort(() => 0.5 - Math.random());
+            dummyPool = pool.slice(0, 3);
+        }
+
+        let finalChoices = [correctText, ...dummyPool.slice(0, 3)];
+        finalChoices = finalChoices.sort(() => 0.5 - Math.random());
+
+        const listContainer = document.getElementById("choices-list");
+        listContainer.innerHTML = "";
+
+        finalChoices.forEach(choice => {
+            const btn = document.createElement("button");
+            btn.className = "choice-btn";
+            btn.textContent = choice;
+            btn.onclick = () => selectChoice(btn, choice, correctText);
+            listContainer.appendChild(btn);
+        });
+    }
+
+    // 四択の選択判定と自動遷移
+    function selectChoice(selectedBtn, chosenValue, correctValue) {
+        const buttons = document.querySelectorAll(".choice-btn");
+        buttons.forEach(btn => btn.disabled = true); // 連打防止
+
+        const isCorrect = (chosenValue === correctValue);
+
+        if (isCorrect) {
+            selectedBtn.classList.add("correct-choice");
+            score++;
+        } else {
+            selectedBtn.classList.add("incorrect-choice");
+            // 正解のボタンをハイライト
+            buttons.forEach(btn => {
+                if (btn.textContent === correctValue) {
+                    btn.classList.add("correct-choice");
+                }
+            });
+            wrongQuestions.push(currentQuestions[currentIndex]);
+        }
+
+        // 自動で1秒後に次の問題へ
+        setTimeout(() => {
+            currentIndex++;
+            if (currentIndex < currentQuestions.length) {
+                showQuestion();
+            } else {
+                showResult();
+            }
+        }, 1000);
     }
 
     function showAnswer() {
-        document.getElementById('meaning').classList.remove('hidden');
-        document.getElementById('action-before').style.display = 'none';
-        document.getElementById('action-after').style.display = 'block';
+        document.getElementById("meaning").classList.remove("hidden");
+        document.getElementById("action-before").style.display = "none";
+        document.getElementById("action-after").style.display = "block";
     }
 
     function submitResult(isCorrect) {
-        const q = currentQuestions[currentIndex];
-        
-        userResults.push({
-            display: q.countryName ? "画像の国名・首都" : q.display,
-            answer: q.answer,
-            isCorrect: isCorrect
-        });
-
         if (isCorrect) {
-            correctCount++;
+            score++;
         } else {
-            incorrectQuestions.push(q);
+            wrongQuestions.push(currentQuestions[currentIndex]);
         }
-        
+        nextQuestion();
+    }
+
+    function nextInLearning() {
+        nextQuestion();
+    }
+
+    function nextQuestion() {
         currentIndex++;
         if (currentIndex < currentQuestions.length) {
             showQuestion();
@@ -1323,168 +1646,103 @@
     }
 
     function showResult() {
-        switchScreen('result-screen');
+        document.getElementById("quiz-screen").classList.remove("active");
+        document.getElementById("result-screen").classList.add("active");
 
-        const elapsed  = quizStartTime ? Date.now() - quizStartTime : 0;
-        const totalSec = Math.floor(elapsed / 1000);
-        const min = Math.floor(totalSec / 60);
-        const sec = totalSec % 60;
-        const timeStr = min > 0 ? `${min}分${sec}秒` : `${sec}秒`;
-        document.getElementById('elapsed-time').textContent = `⏱️ 所要時間：${timeStr}`;
-
-        addStudyTime(totalSec);
-        const retryBtn = document.getElementById('retry-incorrect-btn');
-        const listEl   = document.getElementById('result-list');
-
-        if (isLearningMode) {
-            document.getElementById('score-text').innerText =
-                `全 ${currentQuestions.length} 問の学習が完了しました！ 🎉`;
-            listEl.innerHTML =
-                '<p style="text-align:center;color:#64748b;padding:20px 0;">学習モードでは正誤記録はありません</p>';
-            retryBtn.style.display = 'none';
-        } else {
-            document.getElementById('score-text').innerText =
-                `${currentQuestions.length}問中 ${correctCount}問正解！`;
-            if (incorrectQuestions.length > 0) {
-                retryBtn.style.display = 'block';
-                retryBtn.innerText = `間違えた ${incorrectQuestions.length} 問を再テスト`;
-            } else {
-                retryBtn.style.display = 'none';
-            }
-            listEl.innerHTML = '';
-            userResults.forEach(item => {
-                const itemEl = document.createElement('div');
-                itemEl.className = 'result-item';
-                const textSpan = document.createElement('span');
-                textSpan.innerHTML =
-                    `<span class="q-text">${item.display}</span> ➔ <span class="a-text">${item.answer}</span>`;
-                const badgeSpan = document.createElement('span');
-                if (item.isCorrect) {
-                    badgeSpan.className = 'badge badge-correct';
-                    badgeSpan.innerText = '正解';
-                } else {
-                    badgeSpan.className = 'badge badge-incorrect';
-                    badgeSpan.innerText = '不正解';
-                }
-                itemEl.appendChild(textSpan);
-                itemEl.appendChild(badgeSpan);
-                listEl.appendChild(itemEl);
-            });
+        let durationText = "--";
+        if (startTime) {
+            let elapsedSec = Math.floor((new Date() - startTime) / 1000);
+            let m = Math.floor(elapsedSec / 60);
+            let s = elapsedSec % 60;
+            durationText = m > 0 ? `${m}分${s}秒` : `${s}秒`;
         }
+        document.getElementById("elapsed-time").textContent = `⏱️ 所要時間：${durationText}`;
+
+        // 学習モードはスコア表示なし
+        if (playMode === 'learn') {
+            document.getElementById("score-text").textContent = "学習完了！";
+            document.getElementById("retry-incorrect-btn").style.display = "none";
+        } else {
+            document.getElementById("score-text").textContent = `${currentQuestions.length}問中 ${score}問正解！`;
+            if (wrongQuestions.length > 0) {
+                document.getElementById("retry-incorrect-btn").style.display = "block";
+            } else {
+                document.getElementById("retry-incorrect-btn").style.display = "none";
+            }
+        }
+
+        // リスト詳細表示
+        const listContainer = document.getElementById("result-list");
+        listContainer.innerHTML = "";
+
+        currentQuestions.forEach(item => {
+            const isWrong = wrongQuestions.includes(item);
+            const row = document.createElement("div");
+            row.className = "result-item";
+
+            let labelHtml = `<span class="q-text">${item.q}</span> <span class="a-text">${item.a}</span>`;
+            let badgeHtml = "";
+            
+            if (playMode !== 'learn') {
+                if (isWrong) {
+                    badgeHtml = `<span class="badge badge-incorrect">× 不正解</span>`;
+                } else {
+                    badgeHtml = `<span class="badge badge-correct">〇 正解</span>`;
+                }
+            }
+
+            row.innerHTML = `<div>${labelHtml}</div><div>${badgeHtml}</div>`;
+            listContainer.appendChild(row);
+        });
+
+        recordCategoryFinished(currentCategory);
+    }
+
+    function startRetryQuiz() {
+        currentQuestions = [...wrongQuestions];
+        wrongQuestions = [];
+        currentIndex = 0;
+        score = 0;
+        startTime = new Date();
+
+        document.getElementById("result-screen").classList.remove("active");
+        document.getElementById("quiz-screen").classList.add("active");
+        showQuestion();
     }
 
     function goMenu() {
-        switchScreen('menu-screen');
-        updateMenuStudyTime();
+        document.getElementById("result-screen").classList.remove("active");
+        document.getElementById("quiz-screen").classList.remove("active");
+        document.getElementById("menu-screen").classList.add("active");
     }
 
-    function getTodayKey() {
-        const d = new Date();
-        return `studyTime_${d.getFullYear()}_${d.getMonth() + 1}_${d.getDate()}`;
-    }
-
-    function getTodaySeconds() {
-        const val = localStorage.getItem(getTodayKey());
-        return val ? parseInt(val, 10) : 0;
-    }
-
-    function addStudyTime(seconds) {
-        // 今日の学習時間
-        const current = getTodaySeconds();
-        localStorage.setItem(getTodayKey(), current + seconds);
-        // 総学習時間
-        const total = parseInt(localStorage.getItem('studyTime_total') || '0', 10);
-        localStorage.setItem('studyTime_total', total + seconds);
-    }
-
-    function formatStudyTime(totalSec) {
-        const totalMin = Math.floor(totalSec / 60);
-        const hours = Math.floor(totalMin / 60);
-        const min   = totalMin % 60;
-        if (hours > 0) return `${hours}時間${min}分`;
-        return `${min}分`;
-    }
-
-    function updateMenuStudyTime() {
-        const todayEl = document.getElementById('today-study-time');
-        if (todayEl) todayEl.textContent = formatStudyTime(getTodaySeconds());
-        const totalEl = document.getElementById('total-study-time');
-        if (totalEl) {
-            const total = parseInt(localStorage.getItem('studyTime_total') || '0', 10);
-            totalEl.textContent = formatStudyTime(total);
-        }
-        updateStudyCounts();
-    }
-
-    // ── 学習回数の表示 ──────────────────────────────────
-    const CATEGORY_TYPES = [
-        'months','days','goods','people','foods','nature','time','interests','feelings',
-        'pronouns','verbs','actions',
-        'descriptions','details','positions','links','helpers',
-        'questions','objects','singulars','past',
-        'asiaOceania','africa','america','europe'
-    ];
-
-    function updateStudyCounts() {
-        CATEGORY_TYPES.forEach(type => {
-            const el = document.getElementById(`count-${type}`);
-            if (!el) return;
-            const cnt = parseInt(localStorage.getItem(`studyCount_${type}`) || '0', 10);
-            el.textContent = cnt > 0 ? `${cnt}回` : '';
-        });
-    }
-
-    function nextInLearning() {
-        currentIndex++;
-        if (currentIndex < currentQuestions.length) {
-            showQuestion();
-        } else {
-            showResult();
-        }
-    }
-
-    function toggleLearningMode(checked) {
-        isLearningMode = checked;
-        document.getElementById('learn-mode-badge').textContent = checked ? 'オン' : 'オフ';
-        document.getElementById('learn-mode-badge').style.color = checked ? '#10b981' : '#64748b';
-    }
-
-    function speakWord(word) {
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(word);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.9;
-            utterance.pitch = 1.0;
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
-        } else {
-            alert('お使いのブラウザは音声合成に対応していません。');
-        }
-    }
-
-    function speakCurrentWord() {
-        if (currentEnWord) speakWord(currentEnWord);
-    }
-
+    // ── 拡大ライトボックス機能 ──
     function openLightbox(src) {
-        document.getElementById('lightbox-img').src = src;
-        document.getElementById('lightbox').classList.add('open');
+        if (!src) return;
+        document.getElementById("lightbox-img").src = src;
+        document.getElementById("lightbox").classList.add("open");
     }
-
     function closeLightbox() {
-        document.getElementById('lightbox').classList.remove('open');
+        document.getElementById("lightbox").classList.remove("open");
     }
 
-    document.addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') closeLightbox();
-    });
-
-    function switchScreen(screenId) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
-        document.getElementById(screenId).classList.add('active');
+    // ── Web Speech API 読み上げ ──
+    function speakWord(text) {
+        if (!window.speechSynthesis) return;
+        window.speechSynthesis.cancel();
+        let uttr = new SpeechSynthesisUtterance(text);
+        uttr.lang = "en-US";
+        window.speechSynthesis.speak(uttr);
     }
 
-    updateMenuStudyTime();
+    function escapeHtml(str) {
+        return str
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 </script>
 
 </body>
