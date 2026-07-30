@@ -864,6 +864,7 @@
         </div>
         
         <button id="retry-incorrect-btn" class="btn retry-btn" onclick="startRetryQuiz()">間違えた問題だけ再テスト</button>
+        <button id="retry-same-btn" class="btn retry-btn" onclick="startRetrySameQuiz()">同じ問題を再挑戦</button>
         <button class="btn back-btn" onclick="goMenu()">メニューに戻る</button>
     </div>
 </div>
@@ -1333,6 +1334,7 @@
     let currentIndex = 0;
     let score = 0;
     let wrongQuestions = [];
+    let sameQuestions = [];
     let startTime = null;
     let currentDatasetBackup = []; 
     let currentChoices = [];
@@ -1418,6 +1420,7 @@
         initHeaders();
     });
 
+    //
     function changePlayMode(mode) {
         playMode = mode;
         const labels = ["label-learn", "label-fourChoice", "label-test"];
@@ -1433,10 +1436,12 @@
         }
     }
 
+    //
     function startQuiz(catKey, mode) {
         currentCategory = catKey;
         currentMode = mode;
         wrongQuestions = [];
+        sameQuestions = [];
         startTime = new Date();
 
         let source = datasets[catKey];
@@ -1485,6 +1490,7 @@
 
         currentIndex = 0;
         score = 0;
+        sameQuestions = [...currentQuestions]; // 同じ問題を後で復習用に保持
 
         document.getElementById("menu-screen").classList.remove("active");
         document.getElementById("result-screen").classList.remove("active");
@@ -1493,6 +1499,7 @@
         showQuestion();
     }
 
+    // ── 問題表示 ──
     function showQuestion() {
         const item = currentQuestions[currentIndex];
         document.getElementById("progress").textContent = `${currentIndex + 1} / ${currentQuestions.length}`;
@@ -1657,6 +1664,7 @@
     }, 10000);
 */
 
+    // ── 結果画面表示 ──
     function showResult() {
         document.getElementById("quiz-screen").classList.remove("active");
         document.getElementById("result-screen").classList.add("active");
@@ -1721,8 +1729,22 @@
         recordCategoryFinished(currentCategory);
     }
 
+    // 間違えた問題だけ再挑戦
     function startRetryQuiz() {
         currentQuestions = [...wrongQuestions];
+        wrongQuestions = [];
+        currentIndex = 0;
+        score = 0;
+        startTime = new Date();
+
+        document.getElementById("result-screen").classList.remove("active");
+        document.getElementById("quiz-screen").classList.add("active");
+        showQuestion();
+    }
+    
+    // 同じ問題を再度挑戦する（間違えた問題だけでなく、全問再挑戦）
+    function startRetrySameQuiz() {
+        currentQuestions = [...sameQuestions];
         wrongQuestions = [];
         currentIndex = 0;
         score = 0;
