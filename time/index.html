@@ -1,1 +1,28 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>現在日時</title>
+</head>
+<body>
+  <p id="datetime"></p>
 
+  <script>
+    const now = new Date();
+
+    const formatter = new Intl.DateTimeFormat("ja-JP", {
+      timeZone: "Asia/Tokyo",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hourCycle: "h23"
+    });
+
+    document.getElementById("datetime").textContent =
+      formatter.format(now);
+  </script>
+</body>
+</html>
